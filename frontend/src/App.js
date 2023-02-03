@@ -5,17 +5,10 @@ import LoginForm from "./components/LoginForm";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <ApartmentForm>
-
-        </ApartmentForm>
-      </header>
-    </div>
-    // <Routes>
-    //   <Route path="/" index element={<ApartmentForm></ApartmentForm>}></Route>
-    //   <Route path="/login" index element={<LoginForm />}></Route>
-    // </Routes>
+    <Routes>
+      <Route path="/" index element={<ApartmentForm></ApartmentForm>}></Route>
+      <Route path="/login" index element={<LoginForm />}></Route>
+    </Routes>
   );
 }
 
