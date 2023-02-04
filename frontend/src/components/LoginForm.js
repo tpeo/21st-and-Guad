@@ -5,14 +5,22 @@ import "./ApartmentForm.css";
 import AuthContext from "../contexts/AuthContext";
 
 function LoginForm() {
+  // Use state to manage form data (email and password)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  // Use state to manage error messages
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Use the useNavigate hook from react-router to navigate between pages
   const navigate = useNavigate();
+
+   // Use the AuthContext to access the authentication functions (loginUser and createUser)
   const auth = useContext(AuthContext);
 
+   // Event handler to update the formData state when the input fields change
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -20,6 +28,8 @@ function LoginForm() {
     });
   };
 
+  // Event handler for the login button, it calls the loginUser 
+  // function from the AuthContext and navigates to the main page
   const handleLogin = async (event) => {
     event.preventDefault();
     console.log(formData);
@@ -36,6 +46,8 @@ function LoginForm() {
     }
   };
 
+  // Event handler for the register button, it calls the createUser 
+  // function from the AuthContext and navigates to the main page
   const handleRegister = async (event) => {
     event.preventDefault();
     console.log(formData);
