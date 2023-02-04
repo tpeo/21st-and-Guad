@@ -29,6 +29,7 @@
   .rating-icons {
     display: flex;
     margin-top: 0.5rem;
+    justify-content: center;
   }
   
   .star {
@@ -59,4 +60,28 @@
   
   button:hover {
     background-color: darkorange;
+  }
+
+  .submitBar {
+    display: flex;
+    justify-content: center;
+  }
+
+  button:first-child {
+    margin-right: 1rem; /* or any other value that works for you */
+  }
+
+  .submissions-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .submissions {
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid lightgray;
+    display: inline-block;
+    width: 200px;
+    text-align: center;
+    font-size: 0.9rem;
   }
