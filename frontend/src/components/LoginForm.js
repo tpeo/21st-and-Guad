@@ -31,7 +31,7 @@ function LoginForm() {
         navigate("/");
         setErrorMessage("");
       } catch (error) {
-        setErrorMessage("Incorrect email/password");
+        setErrorMessage(error);
       }
     }
   };
@@ -47,7 +47,7 @@ function LoginForm() {
         navigate("/");
         setErrorMessage("");
       } catch (error) {
-        setErrorMessage("Email already in use");
+        setErrorMessage(error);
       }
     }
   };
