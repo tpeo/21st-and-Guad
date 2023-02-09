@@ -37,10 +37,10 @@ export function useProvideAuth() {
           const user = userCredential.user;
           console.log(user.accessToken);
           console.log("Token successfully stored!");
-          setLoggedIn(true);
           window.localStorage.setItem("loggedIn", true);
           window.localStorage.setItem("username", user.email);
           window.localStorage.setItem("token", user.accessToken); // Should be sent upon subsequent requests
+          setLoggedIn(true);
           resolve();
         })
         .catch((error) => {

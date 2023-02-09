@@ -28,6 +28,15 @@ function LoginForm() {
     });
   };
 
+  // useEffect will run on first render and any time auth.loggedIn changes
+  useEffect(() => {
+    // Check if the user is logged in
+    if (auth.loggedIn) {
+      // If the user is logged in, redirect to the apartment page
+      navigate("/");
+    }
+  }, []);
+
   // Event handler for the login button, it calls the loginUser 
   // function from the AuthContext and navigates to the main page
   const handleLogin = async (event) => {

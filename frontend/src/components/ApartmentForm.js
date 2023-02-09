@@ -25,6 +25,20 @@ function ApartmentForm() {
   // Use the useNavigate hook from react-router to navigate between pages
   const navigate = useNavigate();
 
+  const [name, setName] = useState(window.localStorage.getItem("username"));
+
+  // useEffect will run on first render and any time auth.loggedIn changes
+  useEffect(() => {
+    // Check if the user is logged in
+    if (!auth.loggedIn) {
+      // If the user is not logged in, redirect to the login page
+      navigate("/login");
+    }
+    else{
+      navigate("/");
+    }
+  }, [auth.loggedIn]);
+
   // Event handler to update the formData state when the input fields change
   const handleChange = (event) => {
     setFormData({
@@ -52,12 +66,16 @@ function ApartmentForm() {
       setErrorMessage("");
     }
   };
+  
 
   // this component returns a form for entering apartment data,
   // as well as a list of previously submitted apartments
   return (
     <div>
       <div className="App-header">
+
+       <div className="userBanner">{name} </div>
+        
         {/* form for entering apartment data */}
         <form className="ApartmentForm" onSubmit={handleSubmit}>
           <label>Apartment Name: </label>
@@ -125,7 +143,8 @@ function ApartmentForm() {
             </div>
           ))}
         </div>
-        {/* <button onClick={window.localStorage.setItem('loggedIn', false)}>Logout 'does nothing atm'</button> */}
+        
+        <button onClick={() => auth.logout()}>Logout</button> 
       </div>
     </div>
   );
