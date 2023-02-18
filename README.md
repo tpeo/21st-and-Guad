@@ -1,25 +1,21 @@
 # 21st-and-Guad
-Spring 2023 New Fellow Project Team 1
+Housing site built by UT students!
 
-## Current To-do List
+## Current Plan
 
-Frontend Apartment Form (local database) ✓
+Backend:
+- Implement profile/ and group/ endpoints
 
-Backend CRUD Routes (POST and GET under /apartments) ✓
+- Profile
+  - Add/Create a user profile (create inGroups/partOfGroups field)
+  - Edit a user profile 
+  - Get a user profile (get using docID)
+  - Delete a user profile
 
-Authentication ✓
+- Groups
+  - Create a group object
+  - Get group info (users, apartments)
+  - Add users to a group (use groupID + userID)
+  - Leave a group (if there are no users left, delete)
 
-- separate routes for a login page (/login) and a apartment form (/) have been created ✓
-- AuthContext.js file created, exports 
-    createUser,
-    loggedIn,
-    loginUser,
-    logout functions. ✓
-- frontend client-side has been connected to Firebase ✓
-    - able to error-check and return accessToken for register and login buttons
-- users are redirected to login page route (/login) if auth.loggedIn is false ✓
-- add log out functionality ✓
----
-TODO:
-- try sending a request from frontend with token attached to backend, see if verify middleware works
-- maybe have to deal with tokens expiring after an hour or two? not sure
+Frontend currently on hold while waiting for wireframes
