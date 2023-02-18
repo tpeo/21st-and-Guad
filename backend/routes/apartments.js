@@ -6,6 +6,7 @@ const cors = require("cors");
 const apartments = express.Router();
 apartments.use(cors());
 
+//OLD CODE FROM BEGINNING, will change later :)
 apartments.get("/", async (req, res) => {
   const apartment_db = db.collection("apartments");
   const apartments = await apartment_db.get();
