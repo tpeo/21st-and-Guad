@@ -5,6 +5,18 @@ app.use(express.json());
 require("dotenv").config();
 const { db, admin } = require('./firebase');
 
+// import apartments routes
+const apartmentsRouter = require('./routes/apartments');
+app.use('/apartments', apartmentsRouter);
+
+// import profiles routes
+const profilesRouter = require('./routes/profiles');
+app.use('/profiles', profilesRouter);
+
+// import groups routes
+const groupsRouter = require('./routes/groups');
+app.use('/groups', groupsRouter);
+
 // firebase authentication middleware. 
 // to use, make sure authorization token is inside req.body
 const auth = (req, res, next) => {
@@ -30,25 +42,11 @@ app.get("/", (req, res) => {
   res.status(201).json({ hello: "HELLO WORLD" });
 });
 
-app.get('/apartments', async (req, res) => {
-    const apartment = db.collection("apartments"); 
-    const apartments = await apartment.get();
-    const ret = apartments.docs.map((obj) => obj.data());
-    res.json(ret);
-})
-
-app.post('/apartments', async (req, res) => { 
-    const body = req.body;
-    const doc = await db.collection('apartments').add({
-      name: body.name,
-      location: body.location,
-      rating: body.rating,
-    });
-    
-    res.status(200).send("OK")
-    
-})
-
 app.listen(4000, () => {
   console.log("Server running on port 4000");
 });
+
+//exports the auth() middleware function so that other route files can use it as well
+module.exports = {
+  auth
+};
