@@ -7,6 +7,7 @@ const groups = express.Router();
 groups.use(cors());
 
 // creates a new group object. requires one param: userId to be sent within body
+// adds userId to group document. also adds groupId to user profile document !
 // returns the groupId
 groups.post("/", async (req, res) => {
   try {

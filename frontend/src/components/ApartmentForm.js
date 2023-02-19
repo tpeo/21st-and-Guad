@@ -74,7 +74,7 @@ function ApartmentForm() {
     <div>
       <div className="App-header">
 
-       <div className="userBanner">{name} </div>
+       <div className="userBanner">{window.localStorage.getItem("username")} </div>
         
         {/* form for entering apartment data */}
         <form className="ApartmentForm" onSubmit={handleSubmit}>
