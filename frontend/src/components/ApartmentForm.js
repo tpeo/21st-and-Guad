@@ -28,16 +28,16 @@ function ApartmentForm() {
   const [name, setName] = useState(window.localStorage.getItem("username"));
 
   // useEffect will run on first render and any time auth.loggedIn changes
-  useEffect(() => {
-    // Check if the user is logged in
-    if (!auth.loggedIn) {
-      // If the user is not logged in, redirect to the login page
-      navigate("/login");
-    }
-    else{
-      navigate("/");
-    }
-  }, [auth.loggedIn]);
+  // useEffect(() => {
+  //   // Check if the user is logged in
+  //   if (!auth.loggedIn) {
+  //     // If the user is not logged in, redirect to the login page
+  //     navigate("/login");
+  //   }
+  //   else{
+  //     navigate("/");
+  //   }
+  // }, [auth.loggedIn]);
 
   // Event handler to update the formData state when the input fields change
   const handleChange = (event) => {
