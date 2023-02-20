@@ -23,7 +23,7 @@ profiles.post("/", async (req, res) => {
     third_preference: body.third_preference,
     price: body.price,
     distance: body.distance,
-    group: ''
+    group: []
   });
 
   res.status(200).send("OK");
