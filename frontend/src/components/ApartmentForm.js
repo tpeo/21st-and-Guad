@@ -144,7 +144,8 @@ function ApartmentForm() {
           ))}
         </div>
         
-        <button onClick={() => auth.logout()}>Logout</button> 
+        <button onClick={() => {auth.logout()
+         navigate("/login")}}>Logout</button> 
       </div>
     </div>
   );
