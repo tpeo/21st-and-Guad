@@ -101,7 +101,7 @@ function LoginPage() {
 
             <Box component="form" noValidate onSubmit={handleLogin} sx={{width: 350, my: 2 }}>
 
-            <Typography component="h1" 
+              <Typography component="h1" 
                 sx={{fontWeight: appTheme.typography.fontWeightBold, display: 'flex',
                 flexDirection: 'column', alignItems: 'center', fontSize: appTheme.typography.h1.fontSize}}>
                   Login
@@ -160,7 +160,6 @@ function LoginPage() {
                 </Button>
 
             </Box>
-
             
             <Link href="/register" variant="body2" underline="none">
                 {"Don't have an account?"} 
