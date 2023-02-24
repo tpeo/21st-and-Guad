@@ -12,7 +12,7 @@ export const appTheme = createTheme({
         },
       },
     root: {
-       
+      
     },
     typography: {
         fontFamily: 'Inter',
