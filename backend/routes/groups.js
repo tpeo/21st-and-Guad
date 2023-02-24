@@ -7,27 +7,32 @@ const groups = express.Router();
 groups.use(cors());
 
 // creates a new group object. requires one param: userId to be sent within body
+// adds userId to group document. also adds groupId to user profile document !
 // returns the groupId
 groups.post("/", async (req, res) => {
   try {
     const groups_db = db.collection("groups");
+    const profiles_db = db.collection("profiles");
     const body = req.body;
 
     // Create a new group document with the user ID in the 'users' array
-    const group = await groups_db.add({
+    const newGroup = await groups_db.add({
       users: [body.userId],
     });
 
-    // Create an 'apartments' sub-collection inside the group document
-    const apartmentsRef = group.collection("apartments");
-    // creates a 'dummy' apartment document for now, to show that it works.
-    // in the future, the sub-collection is automatically created whenever
-    // the first element is added
-    const apartment = await apartmentsRef.add({
-      name: "empty for now",
-    });
+    // Add the new group ID to the user's profile document
+    const profileRef = profiles_db.doc(body.userId);
+    const profileDoc = await profileRef.get();
 
-    res.status(201).json({ groupId: group.id });
+    if (profileDoc.exists) {
+      const profileData = profileDoc.data();
+      const updatedGroups = [...profileData.group, newGroup.id];
+      await profileRef.update({ group: updatedGroups });
+    } else {
+      throw new Error("User profile not found");
+    }
+    console.log("Created a group "+newGroup.id+" with userId of "+body.userId);
+    res.status(201).json({ groupId: newGroup.id });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error creating group document");
@@ -64,6 +69,7 @@ groups.get("/", async (req, res) => {
 // adds a user to a group. requires a groupId and userId in req.body
 groups.put("/addUser", async (req, res) => {
   const groups_db = db.collection("groups");
+  const profiles_db = db.collection("profiles");
   const body = req.body;
 
   try {
@@ -84,7 +90,18 @@ groups.put("/addUser", async (req, res) => {
 
       // Update the 'users' array in the group document
       await groupRef.update({ users });
-      console.log(users);
+
+      // Add the new group ID to the user's profile document
+      const profileRef = profiles_db.doc(body.userId);
+      const profileDoc = await profileRef.get();
+
+      if (profileDoc.exists) {
+        const profileData = profileDoc.data();
+        const updatedGroups = [...profileData.group, body.groupId];
+        await profileRef.update({ group: updatedGroups });
+      } else {
+        throw new Error("User profile not found");
+      }
       res.status(200).send("User added to group");
     }
   } catch (error) {
@@ -94,9 +111,13 @@ groups.put("/addUser", async (req, res) => {
 });
 
 // adds a user to a group. requires a groupId and userId in req.body
+// does two things: in the group document, removes userId from 'users' array
+// in profiles document, removes groupId from 'group' array
+// if the group is no more users left, deletes the group
 groups.delete("/removeUser", async (req, res) => {
   const groups_db = db.collection("groups");
   const body = req.body;
+  const profiles_db = db.collection("profiles");
 
   try {
     const groupRef = groups_db.doc(body.groupId);
@@ -111,17 +132,29 @@ groups.delete("/removeUser", async (req, res) => {
       const updatedUsers = users.filter((user) => user !== body.userId);
 
       await groupRef.update({ users: updatedUsers });
-      console.log(users);
-      
+
+      // Update the corresponding profile document
+      const profileRef = profiles_db.doc(body.userId);
+      const profileDoc = await profileRef.get();
+
+      if (!profileDoc.exists) {
+        res.status(404).send("Profile not found");
+      } else {
+        const groupArr = profileDoc.data().group;
+        const updatedGroupArr = groupArr.filter(
+          (groupId) => groupId !== body.groupId
+        );
+        await profileRef.update({ group: updatedGroupArr });
+      }
+
       //special case! if the users array is empty, we can safely delete the group
       if (updatedUsers.length === 0) {
         await groupRef.delete();
         res.send("The last user in the group just left! Group was deleted.");
         return;
       }
-      //default case: user is removed, group remains 
+      //default case: user is removed, group remains
       res.status(200).send("User removed from group");
-    
     }
   } catch (error) {
     console.log(error);

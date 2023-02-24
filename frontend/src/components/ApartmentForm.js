@@ -74,7 +74,7 @@ function ApartmentForm() {
     <div>
       <div className="App-header">
 
-       <div className="userBanner">{name} </div>
+       <div className="userBanner">{window.localStorage.getItem("username")} </div>
         
         {/* form for entering apartment data */}
         <form className="ApartmentForm" onSubmit={handleSubmit}>
@@ -144,7 +144,8 @@ function ApartmentForm() {
           ))}
         </div>
         
-        <button onClick={() => auth.logout()}>Logout</button> 
+        <button onClick={() => {auth.logout()
+         navigate("/login")}}>Logout</button> 
       </div>
     </div>
   );
