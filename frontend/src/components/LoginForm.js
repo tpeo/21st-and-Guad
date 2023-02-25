@@ -20,7 +20,7 @@ function LoginForm() {
    // Use the AuthContext to access the authentication functions (loginUser and createUser)
   const auth = useContext(AuthContext);
 
-   // Event handler to update the formData state when the input fields change
+  // Event handler to update the formData state when the input fields change
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -47,7 +47,6 @@ function LoginForm() {
     } else {
       try {
         await auth.loginUser(formData.email, formData.password);
-        navigate("/");
         setErrorMessage("");
       } catch (error) {
         setErrorMessage(error);

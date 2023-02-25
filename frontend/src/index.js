@@ -8,11 +8,12 @@ import { BrowserRouter } from 'react-router-dom';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   //wrapped in BrowserRouter to be able to use Route within App.js
-  <React.StrictMode>
+  //StrictMode DISABLED for google maps API to work
+  //<React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  //</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
