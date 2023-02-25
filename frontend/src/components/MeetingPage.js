@@ -1,38 +1,72 @@
-import React, { useState } from "react";
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import AdbIcon from "@mui/icons-material/Adb";
-import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip';
-import Avatar from '@mui/material/Avatar';
-import MenuIcon from '@mui/icons-material/Menu';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {appTheme} from "./Theme.js";
-import HiveIcon from '@mui/icons-material/Hive';
-import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import NavBar from "./NavBar.js";
+import { useState } from "react";
+import React from "react";
+import { ThemeProvider } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import { appTheme } from "./Theme";
+import NavBar from "./NavBar";
+import CreateHousingCard from "./cards/CreateHousingCard";
+import Slide from "@mui/material/Slide";
+import Paper, { PaperProps } from "@mui/material/Paper";
+import Draggable from "react-draggable";
 
-// react.school/material-ui
-
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function MeetingPage() {
- 
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCreateHousingCard = (housingCardData) => {
+    console.log(housingCardData); // handle the submitted housing card data here
+    handleClose();
+  };
+
   return (
     <ThemeProvider theme={appTheme}>
-        <NavBar></NavBar>  
-        meeting
-
+      <NavBar></NavBar>
+      {/* meeting */}
+      <Button variant="contained" onClick={handleClickOpen}>
+        Create Housing Card
+      </Button>
+      <Draggable handle="#dialog-handle">
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          TransitionComponent={Transition}
+          keepMounted
+          maxWidth="lg"
+          scroll="paper"
+        >
+          
+          <DialogContent>
+            <CreateHousingCard
+              onSubmit={handleCreateHousingCard}
+              onClose={handleClose}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Draggable>
     </ThemeProvider>
-  
   );
 }
 
 export default MeetingPage;
-
-
-
-  
