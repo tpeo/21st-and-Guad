@@ -1,21 +1,26 @@
 # 21st-and-Guad
 Housing site built by UT students!
 
-## Current Plan
+## Checkpoint 1 TODOs
+
+Frontend:
+- Dashboard
+  - Group members at the top
+  - Carousel of apartment cards
+
+- Create Apartment Card Component
+
+- Map Page
+  - Google Maps API connected
+  - markers on the map for current apartments researched?
+
+- Edit Profile Page
+
+- Login/Register Validation
+
+- Group Invite Link Page
 
 Backend:
-- Implement profile/ and group/ endpoints
-
-- Profile
-  - Add/Create a user profile (create groups/inGroups/partOfGroups field)
-  - Edit a user profile 
-  - Get a user profile (get using docID)
-  - Delete a user profile
-
-- Groups
-  - Create a group object ✓
-  - Get group info (users, apartments) ✓
-  - Add users to a group (use groupID + userID) ✓
-  - Leave a group (if there are no users left, delete) ✓
-
-Frontend currently on hold while waiting for wireframes
+ - Upload profile picture
+ - Upload media to apartment cards
+ 
