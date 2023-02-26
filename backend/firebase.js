@@ -1,8 +1,8 @@
 const admin = require('firebase-admin');
 
-//for some reason .env doesn't work, using cred.json for now
+const cred_JSON = JSON.parse(process.env.CRED_JSON)
 admin.initializeApp({
-    credential: admin.credential.cert(require('./cred.json')),
+    credential: admin.credential.cert(cred_JSON),
     databaseURL: 'https://st-and-guad.firebaseio.com'
 });
 
