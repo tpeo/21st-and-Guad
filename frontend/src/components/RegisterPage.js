@@ -80,7 +80,7 @@ function RegisterPage() {
 
   //create profile
   async function createProfile() {
-    await fetch("https://${process.env.REACT_APP_HOSTNAME}/profiles", {
+    await fetch(`https://${process.env.REACT_APP_HOSTNAME}/profiles`, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors", // no-cors, *cors, same-origin
       cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
