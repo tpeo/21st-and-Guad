@@ -80,6 +80,7 @@ function DashboardPage() {
       icon: <AddIcon />,
       name: "Add Apartment Card",
       tooltipTitle: "Add Apartment",
+      delay: 100,
       onClick: () => {
         console.log("add apartment");
         setOpenDialog(true);
@@ -186,9 +187,11 @@ function DashboardPage() {
           {actions.map((action) => (
             <SpeedDialAction
               key={action.name}
+              delay={action.delay}
               icon={action.icon}
               tooltipTitle={action.tooltipTitle}
               onClick={action.onClick}
+              FabProps={{size: 'medium'}}
             />
           ))}
         </SpeedDial>

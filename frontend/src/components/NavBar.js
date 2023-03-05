@@ -23,8 +23,8 @@ function NavBar() {
             <Container maxWidth="xl">
               <Toolbar disableGutters>
                 
-                <HiveIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-    
+                {/* <HiveIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
+                <img src={process.env.PUBLIC_URL + "/images/logo.png"} alt="Logo" style={{ width: "120px", height: "50px" }}></img>
                 <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "right", mr: 5,}}>
                   
                     <Button component={Link} to="/dashboard"

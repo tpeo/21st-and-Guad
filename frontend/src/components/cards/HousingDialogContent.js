@@ -30,7 +30,7 @@ function HousingDialogContent({ onSubmit, onClose }) {
         <Toolbar
           position="sticky"
           sx={{
-            backgroundColor: appTheme.palette.secondary.main,
+            backgroundColor: appTheme.palette.primary.white,
             position: "absolute",
             top: 0,
             left: 0,
@@ -51,7 +51,7 @@ function HousingDialogContent({ onSubmit, onClose }) {
           <Typography
             variant="h6"
             fontWeight="bold"
-            sx={{ color: "white", flex: 1, textAlign: "center" }}
+            sx={{ color: appTheme.palette.primary.black, flex: 1, textAlign: "center" }}
           >
             Create a New Housing Card
           </Typography>

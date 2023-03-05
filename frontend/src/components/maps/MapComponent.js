@@ -75,6 +75,7 @@ function MapComponent({ apiKey }) {
           bottom: 16,
           left: 16,
           zIndex: 1,
+          color: "white",
         }}
       >
         Get Current Location
