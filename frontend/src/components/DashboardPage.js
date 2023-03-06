@@ -38,6 +38,7 @@ import {
 } from "@mui/icons-material";
 import NavBar from "./NavBar.js";
 import HousingDialogContent from "./cards/HousingDialogContent.js";
+import AddGroupDialog from "./cards/AddGroupDialog.js";
 
 // react.school/material-ui
 
@@ -47,22 +48,28 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function DashboardPage() {
-  const [val, setVal] = useState('');
+  const [val, setVal] = useState("");
+
+  // controls the open/close state of the speed dial
   const [open, setOpen] = useState(false);
-
-  const [openDialog, setOpenDialog] = useState(false);
-
   const handleClose = () => {
     setOpen(false);
   };
 
+  // controls the open/close state of the housing card dialog
+  const [openHousingDialog, setOpenHousingDialog] = useState(false);
   const handleDialogClose = () => {
-    setOpenDialog(false);
+    setOpenHousingDialog(false);
   };
-
   const handleCreateHousingCard = (housingCardData) => {
     console.log(housingCardData); // handle the submitted housing card data here
     handleClose();
+  };
+
+  // controls the open/close state of the group dialog
+  const [openGroupDialog, setOpenGroupDialog] = useState(false);
+  const handleGroupDialogClose = () => {
+    setOpenGroupDialog(false);
   };
 
   const handleChange = (event) => {
@@ -74,7 +81,6 @@ function DashboardPage() {
     { name: "Ion", address: "2100 San Antonio St, Austin, Texas" },
   ];
 
-
   const actions = [
     {
       icon: <AddIcon />,
@@ -83,7 +89,7 @@ function DashboardPage() {
       delay: 100,
       onClick: () => {
         console.log("add apartment");
-        setOpenDialog(true);
+        setOpenHousingDialog(true);
       },
     },
     {
@@ -92,6 +98,7 @@ function DashboardPage() {
       tooltipTitle: "Add Group Member",
       onClick: () => {
         console.log("add group member");
+        setOpenGroupDialog(true);
       },
     },
     {
@@ -178,7 +185,7 @@ function DashboardPage() {
         <SpeedDial
           ariaLabel="SpeedDial example"
           sx={{ position: "fixed", bottom: 16, right: 16 }}
-          icon={<SpeedDialIcon openIcon={<Hive />}/>}
+          icon={<SpeedDialIcon openIcon={<Hive />} />}
           onClose={() => setOpen(false)}
           onOpen={() => setOpen(true)}
           direction="left"
@@ -191,28 +198,33 @@ function DashboardPage() {
               icon={action.icon}
               tooltipTitle={action.tooltipTitle}
               onClick={action.onClick}
-              FabProps={{size: 'medium'}}
+              FabProps={{ size: "medium" }}
             />
           ))}
         </SpeedDial>
       </Grid>
       {/* dialog that can go anywhere on the page bc it pops up from middle */}
       <Dialog
-          open={openDialog}
-          onClose={handleDialogClose}
-          TransitionComponent={Transition}
-          keepMounted
-          maxWidth="lg"
-          scroll="paper"
-        >
-          <DialogContent>
-            <HousingDialogContent
-              onSubmit={handleCreateHousingCard}
-              onClose={handleDialogClose}
-            />
-          </DialogContent>
-          <DialogActions></DialogActions>
-        </Dialog>
+        open={openHousingDialog}
+        onClose={handleDialogClose}
+        TransitionComponent={Transition}
+        keepMounted
+        maxWidth="lg"
+        scroll="paper"
+      >
+        <DialogContent>
+          <HousingDialogContent
+            onSubmit={handleCreateHousingCard}
+            onClose={handleDialogClose}
+          />
+        </DialogContent>
+        <DialogActions></DialogActions>
+      </Dialog>
+      <AddGroupDialog
+        open={openGroupDialog}
+        onClose={handleGroupDialogClose}
+        TransitionComponent={Transition}
+      ></AddGroupDialog>
     </ThemeProvider>
   );
 }
