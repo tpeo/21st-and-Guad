@@ -9,6 +9,7 @@ import DashboardPage from "./components/DashboardPage";
 import MapPage from "./components/MapPage";
 import MeetingPage from "./components/MeetingPage";
 import ProfilePage from "./components/ProfilePage";
+import InvitePage from "./components/InvitePage";
 import { appTheme } from "./components/Theme";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -32,6 +33,7 @@ function App() {
       <Route path="/map" index element={<MapPage />}></Route>
       <Route path="/profile" index element={<ProfilePage />}></Route>
       <Route path="/meeting" index element={<MeetingPage />}></Route>
+      <Route path="/invite" index element={<InvitePage />} />
     </Routes>
     </ThemeProvider>
     </AuthContext.Provider>

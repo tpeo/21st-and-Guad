@@ -24,6 +24,7 @@ import {
   DialogContent,
   Zoom,
   Slide,
+  colors,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { appTheme } from "./Theme.js";
@@ -56,17 +57,18 @@ function DashboardPage() {
     housingCard: false,
     group: false,
   });
-
-  const handleCreateHousingCard = (housingCardData) => {
-    console.log(housingCardData); // handle the submitted housing card data here
-  };
-
+  
   const handleDialogOpen = (dialogName) => {
     setDialogs((prevState) => ({ ...prevState, [dialogName]: true }));
   };
 
   const handleDialogClose = (dialogName) => {
     setDialogs((prevState) => ({ ...prevState, [dialogName]: false }));
+  };
+
+  const handleCreateHousingCard = (housingCardData) => {
+    console.log(housingCardData); // handle the submitted housing card data here
+    handleDialogClose("housingCard");
   };
 
   const handleChange = (event) => {
@@ -181,8 +183,13 @@ function DashboardPage() {
 
         <SpeedDial
           ariaLabel="SpeedDial example"
-          sx={{ position: "fixed", bottom: 16, right: 16 }}
-          icon={<SpeedDialIcon openIcon={<Hive />} />}
+          sx={{ position: "fixed", bottom: 16, right: 16}}
+          icon={
+            <SpeedDialIcon
+              openIcon={<Hive sx={{ color: "white" }}/>}
+              sx={{ color: appTheme.palette.primary.white}}
+            />
+          }
           onClose={() => handleDialogClose("speedDial")}
           onOpen={() => handleDialogOpen("speedDial")}
           direction="left"

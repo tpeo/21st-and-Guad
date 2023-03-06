@@ -22,6 +22,10 @@ function HousingDialogContent({ onSubmit, onClose }) {
     event.preventDefault();
     const housingCardData = { propertyName, address, phoneNumber };
     onSubmit(housingCardData);
+    //reset the form
+    setPropertyName("");
+    setAddress("");
+    setPhoneNumber("");
   };
 
   return (
