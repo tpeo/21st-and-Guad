@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Dialog,
@@ -21,8 +21,14 @@ function AddGroupDialog({ open, onClose, TransitionComponent }) {
   const userID = window.localStorage.getItem("userID");
 
   const [val, setVal] = useState(
-    `http://localhost:3000/invite?groupID=${groupID}&userID=${userID}`
+    `http://${process.env.REACT_APP_DOMAIN}/invite?groupID=${groupID}&userID=${userID}`
   );
+
+  useEffect(() => {
+    const newLink = `http://${process.env.REACT_APP_DOMAIN}/invite?groupID=${groupID}&userID=${userID}`;
+    setVal(newLink);
+  }, [groupID, userID]);
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const handleCopyLink = () => {
     navigator.clipboard.writeText(val);
@@ -55,7 +61,9 @@ function AddGroupDialog({ open, onClose, TransitionComponent }) {
           </IconButton>
         </DialogTitle>
         <DialogContent style={{ padding: "8px 24px" }}>
-          <DialogContentText style={{ marginBottom: "16px", marginRight: "10vw"}}>
+          <DialogContentText
+            style={{ marginBottom: "16px", marginRight: "10vw" }}
+          >
             Share this link to add a roommate to your hive.
           </DialogContentText>
           <TextField
