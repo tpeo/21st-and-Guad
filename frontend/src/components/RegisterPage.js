@@ -49,15 +49,15 @@ function RegisterPage() {
     console.log(formData);
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     console.log(formData);
     if (!formData.email || !formData.password) {
       setErrorMessage("All fields are required.");
     } else {
       try {
-        auth.createUser(formData.email, formData.password);
-        createProfile();
+        await auth.createUser(formData.email, formData.password); // wait for createUser to complete
+        await createProfile(); // wait for createProfile to complete
         navigate("/dashboard");
         setErrorMessage("");
       } catch (error) {
@@ -80,7 +80,14 @@ function RegisterPage() {
 
   //create profile
   async function createProfile() {
-    await fetch(`https://${process.env.REACT_APP_HOSTNAME}/profiles`, {
+    const userID = window.localStorage.getItem("userID"); // get the user ID from localStorage
+    if (!userID) {
+      // handle the case where the user ID is not found in localStorage
+      console.error("User ID not found in localStorage");
+      return;
+    }
+
+    await fetch(`http://${process.env.REACT_APP_HOSTNAME}/profiles`, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors", // no-cors, *cors, same-origin
       cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -92,6 +99,7 @@ function RegisterPage() {
       redirect: "follow", // manual, *follow, error
       referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify({
+        userID: userID, // add the userID to the request body
         email: formData.email,
         name: formData.name,
         gender: formData.gender,
@@ -111,7 +119,7 @@ function RegisterPage() {
 
   return (
     <ThemeProvider theme={appTheme}>
-      <Grid container component="main" sx={{ height: "100vh"}}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
 
         {/* left side */}
