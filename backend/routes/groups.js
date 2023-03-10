@@ -41,9 +41,9 @@ groups.post("/", async (req, res) => {
 
 // gets the data of a group object based on groupId and returns it
 // returns the users in a group, and all apartments inside it
-groups.get("/", async (req, res) => {
+groups.get("/:groupId", async (req, res) => {
   // get groupId from req.body, used to find group document
-  const groupId = req.body.groupId;
+  const groupId = req.params.groupId;
 
   const groupRef = db.collection("groups").doc(groupId);
   const groupDoc = await groupRef.get();

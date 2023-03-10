@@ -35,10 +35,10 @@ export function useProvideAuth() {
         .then((userCredential) => {
           // Signed in : get token
           const user = userCredential.user;
-          console.log(user.accessToken);
-          console.log("Token successfully stored!");
+          console.log("created user: " + user.email)
           window.localStorage.setItem("loggedIn", true);
           window.localStorage.setItem("username", user.email);
+          window.localStorage.setItem("userID", user.uid)
           window.localStorage.setItem("token", user.accessToken); // Should be sent upon subsequent requests
           setLoggedIn(true);
           resolve();
@@ -57,11 +57,11 @@ export function useProvideAuth() {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user.accessToken);
-          console.log("Token successfully stored!");
+          console.log("logged in user: " + user.email)
           setLoggedIn(true);
           window.localStorage.setItem("loggedIn", true);
           window.localStorage.setItem("username", user.email);
+          window.localStorage.setItem("userID", user.uid)
           window.localStorage.setItem("token", user.accessToken); // Should be sent upon subsequent requests
           resolve();
         })

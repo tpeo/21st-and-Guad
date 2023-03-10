@@ -82,7 +82,7 @@ function DashboardPage() {
 
   const actions = [
     {
-      icon: <AddIcon />,
+      icon: "Home",
       name: "Add Apartment Card",
       tooltipTitle: "Add Apartment",
       delay: 100,
@@ -92,7 +92,7 @@ function DashboardPage() {
       },
     },
     {
-      icon: <GroupAdd />,
+      icon: "Group",
       name: "Add Group Member",
       tooltipTitle: "Add Group Member",
       onClick: () => {
@@ -187,7 +187,7 @@ function DashboardPage() {
           icon={
             <SpeedDialIcon
               openIcon={<Hive sx={{ color: "white" }}/>}
-              sx={{ color: appTheme.palette.primary.white}}
+              sx={{ color: appTheme.palette.primary.white,}}
             />
           }
           onClose={() => handleDialogClose("speedDial")}
@@ -199,7 +199,13 @@ function DashboardPage() {
             <SpeedDialAction
               key={action.name}
               delay={action.delay}
-              icon={action.icon}
+              icon={
+                <img
+                  src={process.env.PUBLIC_URL + `/images/amenitiesIcons/${action.icon}.png`}
+                  alt={action.name}
+                  style={{ width: 30, height: 30 }}
+                />
+              }
               tooltipTitle={action.tooltipTitle}
               onClick={action.onClick}
               FabProps={{ size: "medium" }}
