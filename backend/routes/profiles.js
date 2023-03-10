@@ -6,9 +6,20 @@ const cors = require("cors");
 const profiles = express.Router();
 profiles.use(cors());
 
-profiles.get("/", async (req, res) => {
-  console.log("Inside profiles GET route!");
-  res.json("Inside profiles GET route!");
+profiles.get("/:userID", async (req, res) => {
+  try {
+    const userID = req.params.userID;
+    const doc = await db.collection("profiles").doc(userID).get();
+    if (!doc.exists) {
+      res.status(404).json({ message: "Profile not found" });
+    } else {
+      const data = doc.data();
+      res.status(200).json(data);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error getting profile." });
+  }
 });
 
 profiles.post("/", async (req, res) => {

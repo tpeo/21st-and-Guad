@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Select,
@@ -40,6 +40,7 @@ import {
 import NavBar from "./NavBar.js";
 import HousingDialogContent from "./cards/HousingDialogContent.js";
 import AddGroupDialog from "./cards/AddGroupDialog.js";
+import NoGroups from "./cards/NoGroups.js";
 
 // react.school/material-ui
 
@@ -57,7 +58,7 @@ function DashboardPage() {
     housingCard: false,
     group: false,
   });
-  
+
   const handleDialogOpen = (dialogName) => {
     setDialogs((prevState) => ({ ...prevState, [dialogName]: true }));
   };
@@ -79,6 +80,35 @@ function DashboardPage() {
     { name: "Lark", address: "2100 Nueces Street, Austin, Texas" },
     { name: "Ion", address: "2100 San Antonio St, Austin, Texas" },
   ];
+
+  const [userGroupID, setUserGroupID] = useState(null);
+  useEffect(() => {
+    const userID = window.localStorage.getItem("userID");
+    const url = `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`;
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url, {
+          method: "GET", // *GET, POST, PUT, DELETE, etc.
+          mode: "cors", // no-cors, *cors, same-origin
+          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: "same-origin", // include, *same-origin, omit
+          headers: {
+            "Content-Type": "application/json",
+            //Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiYzEyMyIsImVtYWlsIjoiYWJjMTIzQGdtYWlsLmNvbSJ9.kVAp_XhgpFH3Iyl9cnRGUjRFYiBGuRuyYAztbNcRVLs"
+          },
+          redirect: "follow", // manual, *follow, error
+          referrerPolicy: "no-referrer",
+        });
+        const data = await response.json();
+        const groupID = data.group[0] || null;
+        setUserGroupID(groupID);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const actions = [
     {
@@ -113,128 +143,136 @@ function DashboardPage() {
   return (
     <ThemeProvider theme={appTheme}>
       <NavBar></NavBar>
-
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        style={{ minHeight: "100vh" }}
-      >
-        <Grid item xs={12} sm={6} md={6} sx={{ borderRadius: 0 }}>
-          <Box sx={{ width: 350, my: 2 }}>
-            <IconButton
-              component="span"
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                style={{
-                  margin: "10px",
-                  width: "100px",
-                  height: "100px",
-                }}
-              />
-            </IconButton>
-          </Box>
-          <Box component="form" noValidate sx={{ width: 350, my: 2 }}>
-            <FormControl>
-              <Select
-                sx={{ ml: 14 }}
-                //disableunderline
-                IconComponent={ExpandMoreIcon}
-                value={val}
-                onChange={handleChange}
-              >
-                <MenuItem value={0}>Roommate 1</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </Grid>
-
-        <Grid
-          container
-          spacing={2}
-          direction="row"
-          justify="flex-start"
-          alignItems="flex-start"
-          sx={{ flexGrow: 1, width: 1250, mt: 4 }}
-        >
-          {/* https://mui.com/material-ui/react-card/ */}
-          {data.map((elem) => (
-            <Grid item xs={12} sm={6} md={4} key={data.indexOf(elem)}>
-              <Card>
-                <CardHeader
-                  title={`${elem.name}`}
-                  subheader={`${elem.address}`}
-                />
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    other stuff
-                  </Typography>
-                </CardContent>
-              </Card>
+      <div>
+        {userGroupID === null ? (
+          <NoGroups />
+        ) : (
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            style={{ minHeight: "100vh" }}
+          >
+            <Grid item xs={12} sm={6} md={6} sx={{ borderRadius: 0 }}>
+              <Box sx={{ width: 350, my: 2 }}>
+                <IconButton
+                  component="span"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <Avatar
+                    style={{
+                      margin: "10px",
+                      width: "100px",
+                      height: "100px",
+                    }}
+                  />
+                </IconButton>
+              </Box>
+              <Box component="form" noValidate sx={{ width: 350, my: 2 }}>
+                <FormControl>
+                  <Select
+                    sx={{ ml: 14 }}
+                    //disableunderline
+                    IconComponent={ExpandMoreIcon}
+                    value={val}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={0}>Roommate 1</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </Grid>
-          ))}
-        </Grid>
 
-        <SpeedDial
-          ariaLabel="SpeedDial example"
-          sx={{ position: "fixed", bottom: 16, right: 16}}
-          icon={
-            <SpeedDialIcon
-              openIcon={<Hive sx={{ color: "white" }}/>}
-              sx={{ color: appTheme.palette.primary.white,}}
-            />
-          }
-          onClose={() => handleDialogClose("speedDial")}
-          onOpen={() => handleDialogOpen("speedDial")}
-          direction="left"
-          open={dialogs.speedDial}
-        >
-          {actions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              delay={action.delay}
+            <Grid
+              container
+              spacing={2}
+              direction="row"
+              justify="flex-start"
+              alignItems="flex-start"
+              sx={{ flexGrow: 1, width: 1250, mt: 4 }}
+            >
+              {/* https://mui.com/material-ui/react-card/ */}
+              {data.map((elem) => (
+                <Grid item xs={12} sm={6} md={4} key={data.indexOf(elem)}>
+                  <Card>
+                    <CardHeader
+                      title={`${elem.name}`}
+                      subheader={`${elem.address}`}
+                    />
+                    <CardContent>
+                      <Typography variant="h5" gutterBottom>
+                        other stuff
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+
+            <SpeedDial
+              ariaLabel="SpeedDial example"
+              sx={{ position: "fixed", bottom: 16, right: 16 }}
               icon={
-                <img
-                  src={process.env.PUBLIC_URL + `/images/amenitiesIcons/${action.icon}.png`}
-                  alt={action.name}
-                  style={{ width: 30, height: 30 }}
+                <SpeedDialIcon
+                  openIcon={<Hive sx={{ color: "white" }} />}
+                  sx={{ color: appTheme.palette.primary.white }}
                 />
               }
-              tooltipTitle={action.tooltipTitle}
-              onClick={action.onClick}
-              FabProps={{ size: "medium" }}
+              onClose={() => handleDialogClose("speedDial")}
+              onOpen={() => handleDialogOpen("speedDial")}
+              direction="left"
+              open={dialogs.speedDial}
+            >
+              {actions.map((action) => (
+                <SpeedDialAction
+                  key={action.name}
+                  delay={action.delay}
+                  icon={
+                    <img
+                      src={
+                        process.env.PUBLIC_URL +
+                        `/images/amenitiesIcons/${action.icon}.png`
+                      }
+                      alt={action.name}
+                      style={{ width: 30, height: 30 }}
+                    />
+                  }
+                  tooltipTitle={action.tooltipTitle}
+                  onClick={action.onClick}
+                  FabProps={{ size: "medium" }}
+                />
+              ))}
+            </SpeedDial>
+          </Grid>
+        )}
+        {/* dialog that can go anywhere on the page bc it pops up from middle */}
+        <Dialog
+          open={dialogs.housingCard}
+          onClose={() => handleDialogClose("housingCard")}
+          TransitionComponent={Transition}
+          keepMounted
+          maxWidth="lg"
+          scroll="paper"
+        >
+          <DialogContent>
+            <HousingDialogContent
+              onSubmit={handleCreateHousingCard}
+              onClose={() => handleDialogClose("housingCard")}
             />
-          ))}
-        </SpeedDial>
-      </Grid>
-      {/* dialog that can go anywhere on the page bc it pops up from middle */}
-      <Dialog
-        open={dialogs.housingCard}
-        onClose={() => handleDialogClose("housingCard")}
-        TransitionComponent={Transition}
-        keepMounted
-        maxWidth="lg"
-        scroll="paper"
-      >
-        <DialogContent>
-          <HousingDialogContent
-            onSubmit={handleCreateHousingCard}
-            onClose={() => handleDialogClose("housingCard")}
-          />
-        </DialogContent>
-        <DialogActions></DialogActions>
-      </Dialog>
-      <AddGroupDialog
-        open={dialogs.group}
-        onClose={() => handleDialogClose("group")}
-        TransitionComponent={Transition}
-      ></AddGroupDialog>
+          </DialogContent>
+          <DialogActions></DialogActions>
+        </Dialog>
+        <AddGroupDialog
+          open={dialogs.group}
+          onClose={() => handleDialogClose("group")}
+          TransitionComponent={Transition}
+        ></AddGroupDialog>
+      </div>
     </ThemeProvider>
   );
 }
