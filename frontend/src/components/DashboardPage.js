@@ -81,11 +81,11 @@ function DashboardPage() {
     { name: "Ion", address: "2100 San Antonio St, Austin, Texas" },
   ];
 
-  const [userGroupID, setUserGroupID] = useState(null);
+  const [userGroupID, setUserGroupID] = useState(window.localStorage.getItem("groupID"));
+  //RUNS ON FIRST RENDER to get groupID, if it exists
   useEffect(() => {
     const userID = window.localStorage.getItem("userID");
     const url = `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`;
-
     const fetchData = async () => {
       try {
         const response = await fetch(url, {
@@ -101,8 +101,11 @@ function DashboardPage() {
           referrerPolicy: "no-referrer",
         });
         const data = await response.json();
+
+        //if the user is not part of a group, sets groupID in localStorage to 'null'
         const groupID = data.group[0] || null;
         setUserGroupID(groupID);
+        window.localStorage.setItem("groupID", groupID);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -110,6 +113,27 @@ function DashboardPage() {
     fetchData();
   }, []);
 
+  //creates the very first group for a user
+  const createGroup = async () => {
+    let userID = window.localStorage.getItem("userID");
+    let url = `http://${process.env.REACT_APP_HOSTNAME}/groups/`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({ userId: userID }), // include userID in the request body
+        headers: {
+            "Content-Type": "application/json",
+          },
+      });
+      const data = await response.json();
+      window.localStorage.setItem("groupID", data.groupId);
+      setUserGroupID(data.groupId); // update userGroupID state
+    } catch (error) {
+      console.error("Error creating group:", error);
+    }
+  };
+
+  //speedDial action buttons
   const actions = [
     {
       icon: "Home",
@@ -144,8 +168,9 @@ function DashboardPage() {
     <ThemeProvider theme={appTheme}>
       <NavBar></NavBar>
       <div>
+        {/* if the user is NOT part of a group, renders a NoGroups component */}
         {userGroupID === null ? (
-          <NoGroups />
+          <NoGroups createGroup={createGroup} />
         ) : (
           <Grid
             container
