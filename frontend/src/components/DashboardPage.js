@@ -81,11 +81,13 @@ function DashboardPage() {
     { name: "Ion", address: "2100 San Antonio St, Austin, Texas" },
   ];
 
+  const [localData, setLocalData] = useState({ users: [], apartmentData: [] });
+
   const [userGroupID, setUserGroupID] = useState(window.localStorage.getItem("groupID"));
   //RUNS ON FIRST RENDER to get groupID, if it exists
   useEffect(() => {
     const userID = window.localStorage.getItem("userID");
-    const url = `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`;
+    let url = `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`;
     const fetchData = async () => {
       try {
         const response = await fetch(url, {
@@ -106,6 +108,25 @@ function DashboardPage() {
         const groupID = data.group[0] || null;
         setUserGroupID(groupID);
         window.localStorage.setItem("groupID", groupID);
+
+        if (groupID) {
+          // If the user is part of a group, make a request to get the group data
+          const groupUrl = `http://${process.env.REACT_APP_HOSTNAME}/groups/${groupID}`;
+          const groupResponse = await fetch(groupUrl, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const groupData = await groupResponse.json();
+  
+          // Store the group data in the local state
+          setLocalData({
+            users: groupData.users,
+            apartmentData: groupData.apartmentData,
+          });
+          console.log("groupData:", groupData);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }

@@ -1,29 +1,32 @@
-import React, { useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Select from "@mui/material/Select";
-import Typography from "@mui/material/Typography";
-import InputLabel from "@mui/material/InputLabel";
-import IconButton from "@mui/material/IconButton";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import InputAdornment from "@mui/material/InputAdornment";
-import MenuIcon from "@mui/icons-material/Menu";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import React, { useState, useContext } from "react";
+import {
+  Select,
+  Typography,
+  InputLabel,
+  IconButton,
+  MenuItem,
+  FormControl,
+  TextField,
+  Avatar,
+  Button,
+  Box,
+  Grid,
+  InputAdornment,
+} from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+
 import { appTheme } from "./Theme.js";
-import HiveIcon from "@mui/icons-material/Hive";
-import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import NavBar from "./NavBar.js";
+import AuthContext from "../contexts/AuthContext.js";
 
 // react.school/material-ui
 
 function ProfilePage() {
   const [formData, setFormData] = useState({});
+
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
   function handleSubmit(event) {}
 
@@ -43,7 +46,7 @@ function ProfilePage() {
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            //onSubmit={handleSubmit}
             sx={{ width: 350, my: 2 }}
           >
             {/* <Typography component="h1" 
@@ -247,6 +250,16 @@ function ProfilePage() {
               sx={{ mt: 3, mb: 2 }}
             >
               Save Changes
+            </Button>
+            <Button
+              onClick={() => {auth.logout()
+                navigate("/login")}}
+              fullWidth
+              variant="contained"
+              disableElevation
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Logout
             </Button>
           </Box>
         </Grid>
