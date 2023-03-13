@@ -2,9 +2,15 @@ import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme } from "./Theme.js";
-import { Box, Button, Typography, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  CircularProgress,
+  Snackbar,
+} from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import AuthContext from "../contexts/AuthContext";
-
 
 function InvitePage() {
   const { search } = useLocation();
@@ -16,8 +22,12 @@ function InvitePage() {
 
   const [groupData, setGroupData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [senderName, setSenderName] = useState(null);
 
+  // runs on page load to fetch group data and sender name
   useEffect(() => {
+
+    // fetch group data from backend and set state
     const fetchGroupData = async () => {
       try {
         const response = await fetch(
@@ -46,7 +56,87 @@ function InvitePage() {
     fetchGroupData().catch((error) => {
       console.error(error);
     });
-  }, [groupID]);
+
+    // fetch sender name from backend and set state
+    const fetchSenderName = async () => {
+      try {
+        const response = await fetch(
+          `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Profile not found");
+        }
+
+        const profileData = await response.json();
+        setSenderName(profileData.name);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSenderName().catch((error) => {
+      console.error(error);
+    });
+  }, [groupID, userID]);
+
+  // handle join group button click
+  const handleJoinGroup = async () => {
+    try {
+      const response = await fetch(
+        `http://${process.env.REACT_APP_HOSTNAME}/groups/addUser`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            //Authorization: `Bearer ${auth.token}`,
+          },
+          body: JSON.stringify({
+            userId: window.localStorage.getItem("userID"),
+            groupId: groupID,
+          }),
+        }
+      );
+
+      // if user is already in group, display snackbar message, navigate to dashboard
+      if (!response.ok) {
+        const error = await response.text();
+        if (error === "User already in group") {
+          setSnackbarSeverity("warning");
+          setSnackbarMessage("You are already a member of this group! Loading dashboard...");
+          setOpenSnackbar(true);
+        } else {
+          throw new Error("Failed to join group");
+        }
+      } else {
+        setSnackbarSeverity("success");
+        setSnackbarMessage("You have successfully joined the group! Loading dashboard...");
+        setOpenSnackbar(true);
+      }
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 3000); // wait 3 seconds before navigating
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // snackbar state and handlers
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("warning");
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -98,7 +188,7 @@ function InvitePage() {
           {/* conditional based on valid group and user IDs */}
           {loading ? (
             <CircularProgress />
-          ) : groupData ? (
+          ) : groupData && senderName ? (
             <>
               <Box mb={4}>
                 {/* Replace this with your group photo icon */}
@@ -110,7 +200,7 @@ function InvitePage() {
                 align="center"
                 gutterBottom
               >
-                {userID} invited you to join their hive!
+                {senderName} invited you to join their hive!
               </Typography>
               {auth.loggedIn ? (
                 <Button
@@ -118,7 +208,7 @@ function InvitePage() {
                   color="primary"
                   size="large"
                   style={{ color: "white" }}
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => handleJoinGroup()}
                 >
                   Click to join hive
                 </Button>
@@ -141,10 +231,20 @@ function InvitePage() {
               align="center"
               gutterBottom
             >
-              Group not found
+              Group not found :( Please check your invite link.
             </Typography>
           )}
         </Box>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <MuiAlert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
       </Box>
     </ThemeProvider>
   );
