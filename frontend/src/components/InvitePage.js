@@ -107,16 +107,20 @@ function InvitePage() {
       // if user is already in group, display snackbar message, navigate to dashboard
       if (!response.ok) {
         const error = await response.text();
-        if (error === "User already in group") {
+        if (error === "User already in this group") {
           setSnackbarSeverity("warning");
-          setSnackbarMessage("You are already a member of this group! Loading dashboard...");
+          setSnackbarMessage("You are already a member of this group! Redirecting to dashboard...");
+          setOpenSnackbar(true);
+        } else  if (error === "User is already in a group") {
+          setSnackbarSeverity("error");
+          setSnackbarMessage("You cannnot be in more than one group! Redirecting to dashboard...");
           setOpenSnackbar(true);
         } else {
-          throw new Error("Failed to join group");
+          throw new Error(error);
         }
       } else {
         setSnackbarSeverity("success");
-        setSnackbarMessage("You have successfully joined the group! Loading dashboard...");
+        setSnackbarMessage("You have successfully joined the group! Redirecting to dashboard...");
         setOpenSnackbar(true);
       }
       setTimeout(() => {
