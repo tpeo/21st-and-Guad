@@ -92,6 +92,7 @@ apartments.put("/", async (req, res) => {
     price_low,
     price_high,
     floorplan,
+    notes
   } = req.body;
 
   // Update the apartment document with new data
@@ -105,6 +106,7 @@ apartments.put("/", async (req, res) => {
       price_low: price_low,
       price_high: price_high,
       floorplan: floorplan,
+      notes: notes
     });
   } catch (error) {
     console.error(error);
