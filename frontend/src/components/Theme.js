@@ -13,6 +13,8 @@ export const AmenitiesIcon = (props) => {
         // Set the width and height of the button based on the 'size' prop
         width: props.size === "small" ? "50px" : "75px",
         height: props.size === "small" ? "50px" : "75px",
+        marginRight: props.marginRight,
+        marginBottom: props.marginBottom,
         borderRadius: "50%",
         alignItems: "center",
         justifyContent: "center",
@@ -65,6 +67,7 @@ export const appTheme = createTheme({
       darkgrey: "#838181",
       grey2: "#F5F5F5",
       white: "#FFFFFF",
+      lightyellow: "#fefdfa"
     },
     secondary: {
       main: "#D9D9D9",
