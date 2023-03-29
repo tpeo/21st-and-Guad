@@ -1,24 +1,24 @@
 const express = require("express");
 const app = express();
-const cors = require('cors')
+const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 require("dotenv").config();
-const { db, admin } = require('./firebase');
+const { db, admin } = require("./firebase");
 
 // import apartments routes
-const apartmentsRouter = require('./routes/apartments');
-app.use('/apartments', apartmentsRouter);
+const apartmentsRouter = require("./routes/apartments");
+app.use("/apartments", apartmentsRouter);
 
 // import profiles routes
-const profilesRouter = require('./routes/profiles');
-app.use('/profiles', profilesRouter);
+const profilesRouter = require("./routes/profiles");
+app.use("/profiles", profilesRouter);
 
 // import groups routes
-const groupsRouter = require('./routes/groups');
-app.use('/groups', groupsRouter);
+const groupsRouter = require("./routes/groups");
+app.use("/groups", groupsRouter);
 
-// firebase authentication middleware. 
+// firebase authentication middleware.
 // to use, make sure authorization token is inside req.body
 const auth = (req, res, next) => {
   try {
@@ -39,15 +39,14 @@ const auth = (req, res, next) => {
   }
 };
 
-app.get("/", (req, res) => {
-  res.status(201).json({ hello: "HELLO WORLD" });
-});
+// Export the app as a function that Vercel can use
+module.exports = app;
 
 app.listen(4000, () => {
   console.log("Server running on port 4000");
 });
 
 //exports the auth() middleware function so that other route files can use it as well
-module.exports = {
-  auth
-};
+// module.exports = {
+//   auth
+// };
