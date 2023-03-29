@@ -51,6 +51,7 @@ import NavBar from "./NavBar.js";
 import HousingDialogContent from "./cards/HousingDialogContent.js";
 import AddGroupDialog from "./cards/AddGroupDialog.js";
 import NoGroups from "./cards/NoGroups.js";
+import SpeedDialButton from "./SpeedDialButton.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   //return <Slide direction="up" ref={ref} {...props} />;
@@ -835,7 +836,7 @@ function DashboardPage() {
           ))}  
           </Grid>
 
-            <SpeedDial
+            {/* <SpeedDial
               ariaLabel="SpeedDial example"
               sx={{ position: "fixed", bottom: 16, right: 16 }}
               icon={
@@ -868,7 +869,8 @@ function DashboardPage() {
                   FabProps={{ size: "medium" }}
                 />
               ))}
-            </SpeedDial>
+            </SpeedDial> */}
+            <SpeedDialButton></SpeedDialButton>
           </Grid>
         )}
 
