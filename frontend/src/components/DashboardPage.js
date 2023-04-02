@@ -32,17 +32,16 @@ import {
   Zoom,
 } from "@mui/material";
 
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
+import { ThemeProvider, styled } from "@mui/material/styles";
 
 import { appTheme, AmenitiesIcon } from "./Theme.js";
 import {
-  Add as AddIcon,
+  Add,
   Save,
   Hive,
-  GroupAdd,
   MenuIcon,
   ExpandMore as ExpandMoreIcon,
-  AccountCircleRounded as AccountCircleRoundedIcon,
+  AccountCircleRounded,
 } from "@mui/icons-material";
 
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
@@ -51,7 +50,7 @@ import NavBar from "./NavBar.js";
 import HousingDialogContent from "./cards/HousingDialogContent.js";
 import AddGroupDialog from "./cards/AddGroupDialog.js";
 import NoGroups from "./cards/NoGroups.js";
-import SpeedDialButton from "./SpeedDialButton.js";
+//import SpeedDialButton from "./SpeedDialButton.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   //return <Slide direction="up" ref={ref} {...props} />;
@@ -123,11 +122,11 @@ function DashboardPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     console.log(formData);
-    try {
-      await updateApartment(); // wait for updateApartment to complete
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   await updateApartment(); // wait for updateApartment to complete
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   const [userData, setUserData] = useState({
@@ -145,11 +144,11 @@ function DashboardPage() {
     amenities: [],
     distance: "",
     floorplan: "",
-    main_rating: "",
+    main_rating: 0,
     phone_number: "",
     price_high: 0,
     price_low: 0,
-    security_rating: "",
+    security_rating: 0,
     square_footage: "",
     notes: "",
   });
@@ -216,7 +215,7 @@ function DashboardPage() {
           });
           console.log("groupData:", groupData);
           console.log("apartmentData:", groupData.apartmentsData);
-          console.log("test", localData.apartmentData[0].amenities[0]);
+          console.log("test: ", groupData.apartmentsData[0].amenities);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -402,20 +401,6 @@ function DashboardPage() {
                   <Typography>Lorem ipsum</Typography>
                 </AccordionDetails>
               </Accordion>
-
-              {/* <Box component="form" noValidate sx={{ width: 350, my: 2 }}>
-                <FormControl>
-                  <Select
-                    sx={{ ml: 14 }}
-                    //disableunderline
-                    IconComponent={ExpandMoreIcon}
-                    value={val}
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={0}>{userData.name}</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box> */}
             </Grid>
 
             <Grid
@@ -495,315 +480,313 @@ function DashboardPage() {
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                       >
-                        <form onSubmit={handleSubmit}>
-                          <Box sx={style}>
+                        {/* <form onSubmit={handleSubmit}> */}
+                        <Box sx={style}>
+                          <Typography
+                            component="h5"
+                            align="center"
+                            sx={{ fontWeight: 700, fontSize: 22, mb: 1 }}
+                          >
+                            Edit Housing Card
+                          </Typography>
+
+                          <Box component="form" sx={{ width: 700, my: 2 }}>
                             <Typography
                               component="h5"
-                              align="center"
-                              sx={{ fontWeight: 700, fontSize: 22, mb: 1 }}
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
                             >
-                              Edit Housing Card
+                              Property Name
                             </Typography>
 
-                            <Box component="form" sx={{ width: 700, my: 2 }}>
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
-                              >
-                                Property Name
-                              </Typography>
+                            <TextField
+                              margin="normal"
+                              required
+                              id="name"
+                              name="name"
+                              autoFocus
+                              value={formData.name}
+                              sx={{ width: 450 }}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  name: e.target.value,
+                                });
+                              }}
+                            />
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{
+                                fontWeight: 700,
+                                fontSize: 17,
+                                mt: 1,
+                                mb: -1,
+                              }}
+                            >
+                              Address
+                            </Typography>
 
-                              <TextField
-                                margin="normal"
-                                required
-                                id="name"
-                                name="name"
-                                autoFocus
-                                value={formData.name}
-                                sx={{ width: 450 }}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    name: e.target.value,
-                                  });
-                                }}
+                            <TextField
+                              margin="normal"
+                              required
+                              id="address"
+                              name="address"
+                              sx={{ mb: 2.5, width: 450 }}
+                              value={formData.address}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  address: e.target.value,
+                                });
+                              }}
+                            />
+
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
+                            >
+                              Phone Number
+                            </Typography>
+
+                            <TextField
+                              margin="normal"
+                              required
+                              id="number"
+                              name="number"
+                              sx={{ mb: 2.5, width: 450 }}
+                              value={formData.phone_number}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  phone_number: e.target.value,
+                                });
+                              }}
+                            />
+
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: 2 }}
+                            >
+                              Amenities
+                            </Typography>
+
+                            {AMENITIES_ARRAY.map((icon, index) => (
+                              <AmenitiesIcon
+                                key={index}
+                                iconName={icon}
+                                size="small"
+                                marginRight={12}
+                                marginBottom={20}
+                                onClick={() => iconSelect(icon)}
                               />
+                            ))}
 
-                              {console.log(formData.name)}
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: 2 }}
+                            >
+                              Distance
+                            </Typography>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{
-                                  fontWeight: 700,
-                                  fontSize: 17,
-                                  mt: 1,
-                                  mb: -1,
-                                }}
-                              >
-                                Address
-                              </Typography>
+                            <TextField
+                              margin="normal"
+                              required
+                              id="distance"
+                              name="distance"
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment position="end">
+                                    miles
+                                  </InputAdornment>
+                                ),
+                              }}
+                              sx={{ mb: 2.5, mt: -1 }}
+                              value={formData.distance}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  phone_number: e.target.value,
+                                });
+                              }}
+                            />
 
-                              <TextField
-                                margin="normal"
-                                required
-                                id="address"
-                                name="address"
-                                sx={{ mb: 2.5, width: 450 }}
-                                value={formData.address}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    address: e.target.value,
-                                  });
-                                }}
-                              />
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
+                            >
+                              Price Low
+                            </Typography>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
-                              >
-                                Phone Number
-                              </Typography>
+                            <TextField
+                              margin="normal"
+                              required
+                              id="price_low"
+                              name="price_low"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    $
+                                  </InputAdornment>
+                                ),
+                              }}
+                              sx={{ mb: 2.5 }}
+                              value={formData.price_low}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  price_low: e.target.value,
+                                });
+                              }}
+                            />
 
-                              <TextField
-                                margin="normal"
-                                required
-                                id="number"
-                                name="number"
-                                sx={{ mb: 2.5, width: 450 }}
-                                value={formData.phone_number}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    phone_number: e.target.value,
-                                  });
-                                }}
-                              />
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
+                            >
+                              Price High
+                            </Typography>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: 2 }}
-                              >
-                                Amenities
-                              </Typography>
+                            <TextField
+                              margin="normal"
+                              required
+                              id="price_high"
+                              name="price_high"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    $
+                                  </InputAdornment>
+                                ),
+                              }}
+                              sx={{ mb: 2.5 }}
+                              value={formData.price_high}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  price_high: e.target.value,
+                                });
+                              }}
+                            />
 
-                              {AMENITIES_ARRAY.map((icon) => (
-                                <AmenitiesIcon
-                                  iconName={icon}
-                                  size="small"
-                                  marginRight={12}
-                                  marginBottom={20}
-                                  onClick={() => iconSelect(icon)}
-                                />
-                              ))}
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
+                            >
+                              Floor Plan
+                            </Typography>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: 2 }}
-                              >
-                                Distance
-                              </Typography>
+                            <TextField
+                              margin="normal"
+                              required
+                              id="floorplan"
+                              name="nfloorplaname"
+                              sx={{ mb: 2.5 }}
+                              value={formData.floorplan}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  floorplan: e.target.value,
+                                });
+                              }}
+                            />
 
-                              <TextField
-                                margin="normal"
-                                required
-                                id="distance"
-                                name="distance"
-                                InputProps={{
-                                  endAdornment: (
-                                    <InputAdornment position="end">
-                                      miles
-                                    </InputAdornment>
-                                  ),
-                                }}
-                                sx={{ mb: 2.5, mt: -1 }}
-                                value={formData.distance}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    phone_number: e.target.value,
-                                  });
-                                }}
-                              />
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: 1 }}
+                            >
+                              Security
+                            </Typography>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
-                              >
-                                Price Low
-                              </Typography>
+                            <Rating
+                              value={formData.security_rating}
+                              precision={0.5}
+                              sx={{
+                                "& .MuiRating-iconFilled": {
+                                  color: appTheme.palette.primary.main,
+                                },
+                                mb: 2,
+                              }}
+                              onChange={(event, newValue) => {
+                                setFormData({
+                                  ...formData,
+                                  security_rating: newValue,
+                                });
+                              }}
+                            />
 
-                              <TextField
-                                margin="normal"
-                                required
-                                id="price_low"
-                                name="price_low"
-                                InputProps={{
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      $
-                                    </InputAdornment>
-                                  ),
-                                }}
-                                sx={{ mb: 2.5 }}
-                                value={formData.price_low}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    price_low: e.target.value,
-                                  });
-                                }}
-                              />
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mb: 1 }}
+                            >
+                              Maintenance
+                            </Typography>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
-                              >
-                                Price High
-                              </Typography>
+                            <Rating
+                              value={formData.main_rating}
+                              precision={0.5}
+                              sx={{
+                                "& .MuiRating-iconFilled": {
+                                  color: appTheme.palette.primary.main,
+                                },
+                              }}
+                              onChange={(event, newValue) => {
+                                setFormData({
+                                  ...formData,
+                                  main_rating: newValue,
+                                });
+                              }}
+                            />
 
-                              <TextField
-                                margin="normal"
-                                required
-                                id="price_high"
-                                name="price_high"
-                                InputProps={{
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      $
-                                    </InputAdornment>
-                                  ),
-                                }}
-                                sx={{ mb: 2.5 }}
-                                value={formData.price_high}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    price_high: e.target.value,
-                                  });
-                                }}
-                              />
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{ fontWeight: 700, fontSize: 17, mt: 1 }}
+                            >
+                              Signed
+                            </Typography>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
-                              >
-                                Floor Plan
-                              </Typography>
+                            <Typography
+                              component="h5"
+                              width="500"
+                              sx={{
+                                fontWeight: 700,
+                                fontSize: 17,
+                                mt: 1,
+                                mb: -1,
+                              }}
+                            >
+                              Notes
+                            </Typography>
 
-                              <TextField
-                                margin="normal"
-                                required
-                                id="floorplan"
-                                name="nfloorplaname"
-                                sx={{ mb: 2.5 }}
-                                value={formData.floorplan}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    floorplan: e.target.value,
-                                  });
-                                }}
-                              />
+                            <TextField
+                              margin="normal"
+                              required
+                              fullWidth
+                              id="name"
+                              name="name"
+                              multiline
+                              rows={10}
+                              sx={{ mb: 2.5 }}
+                              value={formData.notes}
+                              onChange={(e) => {
+                                setFormData({
+                                  ...formData,
+                                  notes: e.target.value,
+                                });
+                              }}
+                            />
+                          </Box>
 
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: 1 }}
-                              >
-                                Security
-                              </Typography>
-
-                              <Rating
-                                value={formData.security_rating}
-                                precision={0.5}
-                                sx={{
-                                  "& .MuiRating-iconFilled": {
-                                    color: appTheme.palette.primary.main,
-                                  },
-                                  mb: 2,
-                                }}
-                                onChange={(event, newValue) => {
-                                  setFormData({
-                                    ...formData,
-                                    security_rating: newValue,
-                                  });
-                                }}
-                              />
-
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mb: 1 }}
-                              >
-                                Maintenance
-                              </Typography>
-
-                              <Rating
-                                value={formData.main_rating}
-                                precision={0.5}
-                                sx={{
-                                  "& .MuiRating-iconFilled": {
-                                    color: appTheme.palette.primary.main,
-                                  },
-                                }}
-                                onChange={(event, newValue) => {
-                                  setFormData({
-                                    ...formData,
-                                    main_rating: newValue,
-                                  });
-                                }}
-                              />
-
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{ fontWeight: 700, fontSize: 17, mt: 1 }}
-                              >
-                                Signed
-                              </Typography>
-
-                              <Typography
-                                component="h5"
-                                width="500"
-                                sx={{
-                                  fontWeight: 700,
-                                  fontSize: 17,
-                                  mt: 1,
-                                  mb: -1,
-                                }}
-                              >
-                                Notes
-                              </Typography>
-
-                              <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="name"
-                                name="name"
-                                multiline
-                                rows={10}
-                                maxRows={Infinity}
-                                sx={{ mb: 2.5 }}
-                                value={formData.notes}
-                                onChange={(e) => {
-                                  setFormData({
-                                    ...formData,
-                                    notes: e.target.value,
-                                  });
-                                }}
-                              />
-                            </Box>
-
+                          <Box component="form" onSubmit={handleSubmit}>
                             <Box>
                               <Button
                                 type="submit"
@@ -815,7 +798,8 @@ function DashboardPage() {
                               </Button>
                             </Box>
                           </Box>
-                        </form>
+                        </Box>
+                        {/* </form> */}
                       </Modal>
 
                       <CardHeader
@@ -846,8 +830,9 @@ function DashboardPage() {
                           Amenities
                         </Typography>
 
-                        {elem.amenities.map((icon) => (
+                        {elem.amenities.map((icon, index) => (
                           <AmenitiesIcon
+                            key={index}
                             active="true"
                             iconName={icon}
                             size="small"
@@ -1031,67 +1016,66 @@ function DashboardPage() {
                 </Grid>
               ))}
             </Grid>
-
-            {/* <SpeedDial
-              ariaLabel="SpeedDial example"
-              sx={{ position: "fixed", bottom: 16, right: 16 }}
-              icon={
-                <SpeedDialIcon
-                  openIcon={<Hive sx={{ color: "white" }} />}
-                  sx={{ color: appTheme.palette.primary.white }}
-                />
-              }
-              onClose={() => handleDialogClose("speedDial")}
-              onOpen={() => handleDialogOpen("speedDial")}
-              direction="left"
-              open={dialogs.speedDial}
-            >
-              {actions.map((action) => (
-                <SpeedDialAction
-                  key={action.name}
-                  delay={action.delay}
-                  icon={
-                    <img
-                      src={
-                        process.env.PUBLIC_URL +
-                        `/images/amenitiesIcons/${action.icon}.png`
-                      }
-                      alt={action.name}
-                      style={{ width: 30, height: 30 }}
-                    />
-                  }
-                  tooltipTitle={action.tooltipTitle}
-                  onClick={action.onClick}
-                  FabProps={{ size: "medium" }}
-                />
-              ))}
-            </SpeedDial> */}
-            <SpeedDialButton></SpeedDialButton>
           </Grid>
         )}
 
-        {/* dialog that can go anywhere on the page bc it pops up from middle */}
-        <Dialog
-          open={dialogs.housingCard}
-          onClose={() => handleDialogClose("housingCard")}
-          TransitionComponent={Transition}
-          keepMounted
-          maxWidth="lg"
-          scroll="paper"
-        >
-          <DialogContent>
-            <HousingDialogContent
-              onSubmit={handleCreateHousingCard}
-              onClose={() => handleDialogClose("housingCard")}
-            />
-          </DialogContent>
-          <DialogActions></DialogActions>
-        </Dialog>
-        <AddGroupDialog
-          open={dialogs.group}
-          onClose={() => handleDialogClose("group")}
-          TransitionComponent={Transition}
-        ></AddGroupDialog>
+          <SpeedDial
+            ariaLabel="SpeedDial example"
+            sx={{ position: "fixed", bottom: 16, right: 16 }}
+            icon={
+              <SpeedDialIcon
+                openIcon={<Hive sx={{ color: "white" }} />}
+                sx={{ color: appTheme.palette.primary.white }}
+              />
+            }
+            onClose={() => handleDialogClose("speedDial")}
+            onOpen={() => handleDialogOpen("speedDial")}
+            direction="left"
+            open={dialogs.speedDial}
+          >
+            {actions.map((action) => (
+              <SpeedDialAction
+                key={action.name}
+                delay={action.delay}
+                icon={
+                  <img
+                    src={
+                      process.env.PUBLIC_URL +
+                      `/images/amenitiesIcons/${action.icon}.png`
+                    }
+                    alt={action.name}
+                    style={{ width: 30, height: 30 }}
+                  />
+                }
+                tooltipTitle={action.tooltipTitle}
+                onClick={action.onClick}
+                FabProps={{ size: "medium" }}
+              />
+            ))}
+          </SpeedDial>
+
+          {/* dialog that can go anywhere on the page bc it pops up from middle */}
+          <Dialog
+            open={dialogs.housingCard}
+            onClose={() => handleDialogClose("housingCard")}
+            TransitionComponent={Transition}
+            keepMounted
+            maxWidth="lg"
+            scroll="paper"
+          >
+            <DialogContent>
+              <HousingDialogContent
+                onSubmit={handleCreateHousingCard}
+                onClose={() => handleDialogClose("housingCard")}
+              />
+            </DialogContent>
+            <DialogActions></DialogActions>
+          </Dialog>
+          <AddGroupDialog
+            open={dialogs.group}
+            onClose={() => handleDialogClose("group")}
+            TransitionComponent={Transition}
+          ></AddGroupDialog>
       </div>
     </ThemeProvider>
   );
