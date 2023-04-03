@@ -75,15 +75,64 @@ function DashboardPage() {
     setDialogs((prevState) => ({ ...prevState, [dialogName]: false }));
   };
 
-  const handleCreateHousingCard = (housingCardData) => {
-    console.log(housingCardData); // handle the submitted housing card data here
-    
+  async function handleCreateHousingCard(housingCardData) {
+    console.log(housingCardData);
+    try {
+      await createApartment(housingCardData); // wait for createApartment to complete
+    } catch (error) {
+      console.log(error);
+    }
     handleDialogClose("housingCard");
-  };
+  }
 
   const handleChange = (event) => {
     setVal(event.target.value);
   };
+
+  //create an apartment card
+  async function createApartment(newFormData) {
+    const response = await fetch(
+      `http://${process.env.REACT_APP_HOSTNAME}/apartments`,
+      {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+          //Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiYzEyMyIsImVtYWlsIjoiYWJjMTIzQGdtYWlsLmNvbSJ9.kVAp_XhgpFH3Iyl9cnRGUjRFYiBGuRuyYAztbNcRVLs"
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify({
+          groupId: window.localStorage.getItem("groupID"),
+          name: newFormData.name,
+          address: newFormData.address,
+          amenities: newFormData.amenities,
+          distance: newFormData.distance,
+          floorplan_bed: newFormData.floorplan_bed,
+          floorplan_bath: newFormData.floorplan_bath,
+          main_rating: newFormData.main_rating,
+          phone_number: newFormData.phone_number,
+          price_high: newFormData.price_high,
+          price_low: newFormData.price_low,
+          security_rating: newFormData.security_rating,
+          square_footage: newFormData.square_footage,
+          notes: newFormData.notes,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      const newApartment = await response.json(); // get the newly created apartment object with the ID
+      setLocalData((prevState) => ({
+        ...prevState,
+        apartmentData: [...prevState.apartmentData, newApartment], // add the new apartment to the local data
+      }));
+    } else {
+      console.log("Failed to create apartment.");
+    }
+  }
 
   //update existing apartment card
   async function updateApartment() {
@@ -99,11 +148,14 @@ function DashboardPage() {
       redirect: "follow", // manual, *follow, error
       referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify({
+        groupId: window.localStorage.getItem("groupID"),
+        apartmentId: formData.id,
         name: formData.name,
         address: formData.address,
         amenities: formData.amenities,
         distance: formData.distance,
-        floorplan: formData.floorplan,
+        floorplan_bed: formData.floorplan_bed,
+        floorplan_bath: formData.floorplan_bath,
         main_rating: formData.main_rating,
         phone_number: formData.phone_number,
         price_high: formData.price_high,
@@ -115,6 +167,27 @@ function DashboardPage() {
     })
       .then((resp) => resp.json())
       .then((json) => console.log(json))
+      .then(() => {
+        const apartmentIndex = localData.apartmentData.findIndex(
+          (apartment) => apartment.id === formData.id
+        );
+        if (apartmentIndex === -1) {
+          // apartment with the given ID was not found
+          return;
+        }
+
+        const updatedApartment = {
+          ...localData.apartmentData[apartmentIndex],
+          ...formData,
+        };
+        const updatedApartmentData = [...localData.apartmentData];
+        updatedApartmentData[apartmentIndex] = updatedApartment;
+
+        setLocalData((prevState) => ({
+          ...prevState,
+          apartmentData: updatedApartmentData,
+        }));
+      })
       .catch((err) => {
         console.log(err);
       });
@@ -123,12 +196,12 @@ function DashboardPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     console.log(formData);
-    // also update localData
-    // try {
-    //   await updateApartment(); // wait for updateApartment to complete
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      await updateApartment(); // wait for updateApartment to complete
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const [userData, setUserData] = useState({
@@ -145,7 +218,8 @@ function DashboardPage() {
     address: "",
     amenities: [],
     distance: "",
-    floorplan: "",
+    floorplan_bed: 0,
+    floorplan_bath: 0,
     main_rating: 0,
     phone_number: "",
     price_high: 0,
@@ -153,6 +227,7 @@ function DashboardPage() {
     security_rating: 0,
     square_footage: "",
     notes: "",
+    id: "",
   });
 
   const [localData, setLocalData] = useState({ users: [], apartmentData: [] });
@@ -185,6 +260,7 @@ function DashboardPage() {
         const groupID = data.group[0] || null;
         setUserGroupID(groupID);
         window.localStorage.setItem("groupID", groupID);
+        console.log("groupID: " + groupID);
         setUserData({
           name: data.name,
           first_preference: data.first_preference,
@@ -216,8 +292,8 @@ function DashboardPage() {
             apartmentData: groupData.apartmentsData,
           });
           console.log("groupData:", groupData);
-          console.log("apartmentData:", groupData.apartmentsData);
-          console.log("test: ", groupData.apartmentsData[0].id);
+          // console.log("apartmentData:", groupData.apartmentsData);
+          // console.log("test: ", groupData.apartmentsData[0].id);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -339,11 +415,13 @@ function DashboardPage() {
       distance: props.distance,
       price_high: props.price_high,
       price_low: props.price_low,
-      floorplan: props.floorplan,
+      floorplan_bed: props.floorplan_bed,
+      floorplan_bath: props.floorplan_bath,
       square_footage: props.square_footage,
       security_rating: props.security_rating,
       main_rating: props.main_rating,
       notes: props.notes,
+      id: props.id,
     });
   };
 
@@ -466,11 +544,13 @@ function DashboardPage() {
                             distance: elem.distance,
                             price_high: elem.price_high,
                             price_low: elem.price_low,
-                            floorplan: elem.floorplan,
+                            floorplan_bed: elem.floorplan_bed,
+                            floorplan_bath: elem.floorplan_bath,
                             square_footage: elem.square_footage,
                             security_rating: elem.security_rating,
                             main_rating: elem.main_rating,
                             notes: elem.notes,
+                            id: elem.id,
                           })
                         }
                         sx={{ float: "right", mt: 2 }}
@@ -626,61 +706,55 @@ function DashboardPage() {
                               width="500"
                               sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
                             >
-                              Price Low
+                              Price
                             </Typography>
 
-                            <TextField
-                              margin="normal"
-                              required
-                              id="price_low"
-                              name="price_low"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    $
-                                  </InputAdornment>
-                                ),
-                              }}
-                              sx={{ mb: 2.5 }}
-                              value={formData.price_low}
-                              onChange={(e) => {
-                                setFormData({
-                                  ...formData,
-                                  price_low: e.target.value,
-                                });
-                              }}
-                            />
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <TextField
+                                margin="normal"
+                                id="price_low"
+                                name="price_low"
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      $
+                                    </InputAdornment>
+                                  ),
+                                }}
+                                sx={{ mr: 1, width: 100 }}
+                                value={formData.price_low}
+                                onChange={(e) => {
+                                  setFormData({
+                                    ...formData,
+                                    price_low: e.target.value,
+                                  });
+                                }}
+                              />
+                              <Typography variant="body1" sx={{ mr: 1 }}>
+                                -
+                              </Typography>
 
-                            <Typography
-                              component="h5"
-                              width="500"
-                              sx={{ fontWeight: 700, fontSize: 17, mb: -1 }}
-                            >
-                              Price High
-                            </Typography>
-
-                            <TextField
-                              margin="normal"
-                              required
-                              id="price_high"
-                              name="price_high"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    $
-                                  </InputAdornment>
-                                ),
-                              }}
-                              sx={{ mb: 2.5 }}
-                              value={formData.price_high}
-                              onChange={(e) => {
-                                setFormData({
-                                  ...formData,
-                                  price_high: e.target.value,
-                                });
-                              }}
-                            />
-
+                              <TextField
+                                margin="normal"
+                                id="price_high"
+                                name="price_high"
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      $
+                                    </InputAdornment>
+                                  ),
+                                }}
+                                sx={{ mr: 1, width: 100 }}
+                                value={formData.price_high}
+                                onChange={(e) => {
+                                  setFormData({
+                                    ...formData,
+                                    price_high: e.target.value,
+                                  });
+                                }}
+                              />
+                            </Box>
                             <Typography
                               component="h5"
                               width="500"
@@ -689,20 +763,52 @@ function DashboardPage() {
                               Floor Plan
                             </Typography>
 
-                            <TextField
-                              margin="normal"
-                              required
-                              id="floorplan"
-                              name="nfloorplaname"
-                              sx={{ mb: 2.5 }}
-                              value={formData.floorplan}
-                              onChange={(e) => {
-                                setFormData({
-                                  ...formData,
-                                  floorplan: e.target.value,
-                                });
-                              }}
-                            />
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <TextField
+                                margin="normal"
+                                id="floor_plan_bed"
+                                name="floor_plan_bed"
+                                InputProps={{
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      Bed
+                                    </InputAdornment>
+                                  ),
+                                }}
+                                sx={{ mr: 1, width: 100 }}
+                                value={formData.floorplan_bed}
+                                onChange={(e) => {
+                                  setFormData({
+                                    ...formData,
+                                    floorplan_bed: e.target.value,
+                                  });
+                                }}
+                              />
+                              <Typography variant="body1" sx={{ mr: 1 }}>
+                                x
+                              </Typography>
+
+                              <TextField
+                                margin="normal"
+                                id="floor_plan_bath"
+                                name="floor_plan_bath"
+                                InputProps={{
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      Bath
+                                    </InputAdornment>
+                                  ),
+                                }}
+                                sx={{ mr: 1, width: 100 }}
+                                value={formData.floorplan_bath}
+                                onChange={(e) => {
+                                  setFormData({
+                                    ...formData,
+                                    floorplan_bath: e.target.value,
+                                  });
+                                }}
+                              />
+                            </Box>
 
                             <Typography
                               component="h5"
@@ -881,9 +987,12 @@ function DashboardPage() {
 
                         <Slider
                           getAriaLabel={() => "Price range"}
-                          value={[elem.price_low, elem.price_high]}
+                          value={[
+                            Number(elem.price_low), // ensure price_low is a number
+                            Number(elem.price_high), // ensure price_high is a number
+                          ]}
                           min={0}
-                          max={600}
+                          max={2000}
                           valueLabelDisplay="auto"
                         />
 
@@ -894,22 +1003,42 @@ function DashboardPage() {
                           Floor plan
                         </Typography>
 
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontSize: 16,
-                            border: 1,
-                            fontWeight: 400,
-                            borderColor: appTheme.palette.secondary.main,
-                            borderRadius: 1,
-                            width: 130,
-                            paddingLeft: 1,
-                            mt: 1,
-                            mb: 1,
-                          }}
-                        >
-                          {elem.floorplan}
-                        </Typography>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontSize: 16,
+                              border: 1,
+                              fontWeight: 400,
+                              borderColor: appTheme.palette.secondary.main,
+                              borderRadius: 1,
+                              width: 100,
+                              paddingLeft: 1,
+                              mt: 1,
+                              mb: 1,
+                              mr: 1,
+                            }}
+                          >
+                            {elem.floorplan_bed} bed
+                          </Typography>
+
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontSize: 16,
+                              border: 1,
+                              fontWeight: 400,
+                              borderColor: appTheme.palette.secondary.main,
+                              borderRadius: 1,
+                              width: 100,
+                              paddingLeft: 1,
+                              mt: 1,
+                              mb: 1,
+                            }}
+                          >
+                            {elem.floorplan_bath} bath
+                          </Typography>
+                        </Box>
 
                         <Typography
                           variant="h3"
@@ -1027,63 +1156,63 @@ function DashboardPage() {
           </Grid>
         )}
 
-          <SpeedDial
-            ariaLabel="SpeedDial example"
-            sx={{ position: "fixed", bottom: 16, right: 16 }}
-            icon={
-              <SpeedDialIcon
-                openIcon={<Hive sx={{ color: "white" }} />}
-                sx={{ color: appTheme.palette.primary.white }}
-              />
-            }
-            onClose={() => handleDialogClose("speedDial")}
-            onOpen={() => handleDialogOpen("speedDial")}
-            direction="left"
-            open={dialogs.speedDial}
-          >
-            {actions.map((action) => (
-              <SpeedDialAction
-                key={action.name}
-                delay={action.delay}
-                icon={
-                  <img
-                    src={
-                      process.env.PUBLIC_URL +
-                      `/images/amenitiesIcons/${action.icon}.png`
-                    }
-                    alt={action.name}
-                    style={{ width: 30, height: 30 }}
-                  />
-                }
-                tooltipTitle={action.tooltipTitle}
-                onClick={action.onClick}
-                FabProps={{ size: "medium" }}
-              />
-            ))}
-          </SpeedDial>
+        <SpeedDial
+          ariaLabel="SpeedDial example"
+          sx={{ position: "fixed", bottom: 16, right: 16 }}
+          icon={
+            <SpeedDialIcon
+              openIcon={<Hive sx={{ color: "white" }} />}
+              sx={{ color: appTheme.palette.primary.white }}
+            />
+          }
+          onClose={() => handleDialogClose("speedDial")}
+          onOpen={() => handleDialogOpen("speedDial")}
+          direction="left"
+          open={dialogs.speedDial}
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              delay={action.delay}
+              icon={
+                <img
+                  src={
+                    process.env.PUBLIC_URL +
+                    `/images/amenitiesIcons/${action.icon}.png`
+                  }
+                  alt={action.name}
+                  style={{ width: 30, height: 30 }}
+                />
+              }
+              tooltipTitle={action.tooltipTitle}
+              onClick={action.onClick}
+              FabProps={{ size: "medium" }}
+            />
+          ))}
+        </SpeedDial>
 
-          {/* dialog that can go anywhere on the page bc it pops up from middle */}
-          <Dialog
-            open={dialogs.housingCard}
-            onClose={() => handleDialogClose("housingCard")}
-            TransitionComponent={Transition}
-            keepMounted
-            maxWidth="lg"
-            scroll="paper"
-          >
-            <DialogContent>
-              <HousingDialogContent
-                onSubmit={handleCreateHousingCard}
-                onClose={() => handleDialogClose("housingCard")}
-              />
-            </DialogContent>
-            <DialogActions></DialogActions>
-          </Dialog>
-          <AddGroupDialog
-            open={dialogs.group}
-            onClose={() => handleDialogClose("group")}
-            TransitionComponent={Transition}
-          ></AddGroupDialog>
+        {/* dialog that can go anywhere on the page bc it pops up from middle */}
+        <Dialog
+          open={dialogs.housingCard}
+          onClose={() => handleDialogClose("housingCard")}
+          TransitionComponent={Transition}
+          keepMounted
+          maxWidth="lg"
+          scroll="paper"
+        >
+          <DialogContent>
+            <HousingDialogContent
+              onSubmit={handleCreateHousingCard}
+              onClose={() => handleDialogClose("housingCard")}
+            />
+          </DialogContent>
+          <DialogActions></DialogActions>
+        </Dialog>
+        <AddGroupDialog
+          open={dialogs.group}
+          onClose={() => handleDialogClose("group")}
+          TransitionComponent={Transition}
+        ></AddGroupDialog>
       </div>
     </ThemeProvider>
   );

@@ -55,7 +55,12 @@ apartments.post("/", async (req, res) => {
     distance,
     price_low,
     price_high,
-    floorplan,
+    floorplan_bed,
+    floorplan_bath,
+    main_rating,
+    security_rating,
+    square_footage,
+    notes,
   } = req.body;
 
   // Create a new apartment document
@@ -67,12 +72,27 @@ apartments.post("/", async (req, res) => {
     distance: distance,
     price_low: price_low,
     price_high: price_high,
-    floorplan: floorplan,
+    floorplan_bed: floorplan_bed,
+    floorplan_bath: floorplan_bath,
+    main_rating: main_rating,
+    security_rating: security_rating,
+    square_footage: square_footage,
+    notes: notes,
   });
+
+  // Get the ID of the newly created apartment document
+  const newApartmentId = newApartmentRef.id;
 
   // Return the newly created apartment document
   const newApartmentDoc = await newApartmentRef.get();
-  res.status(201).send(newApartmentDoc.data());
+
+  // Create a new object that contains both the apartment data and its ID
+  const newApartmentData = {
+    id: newApartmentId,
+    ...newApartmentDoc.data(),
+  };
+  // Return the newly created apartment document with its ID
+  res.status(201).json(newApartmentData);
 });
 
 // updates an apartment card using new data
@@ -80,7 +100,11 @@ apartments.post("/", async (req, res) => {
 apartments.put("/", async (req, res) => {
   const groupId = req.body.groupId;
   const apartmentId = req.body.apartmentId;
-  const apartmentRef = db.collection("groups").doc(groupId).collection("apartments").doc(apartmentId);
+  const apartmentRef = db
+    .collection("groups")
+    .doc(groupId)
+    .collection("apartments")
+    .doc(apartmentId);
 
   // Extract apartment fields from request body
   const {
@@ -91,8 +115,12 @@ apartments.put("/", async (req, res) => {
     distance,
     price_low,
     price_high,
-    floorplan,
-    notes
+    floorplan_bed,
+    floorplan_bath,
+    main_rating,
+    security_rating,
+    square_footage,
+    notes,
   } = req.body;
 
   // Update the apartment document with new data
@@ -105,8 +133,12 @@ apartments.put("/", async (req, res) => {
       distance: distance,
       price_low: price_low,
       price_high: price_high,
-      floorplan: floorplan,
-      notes: notes
+      floorplan_bed: floorplan_bed,
+      floorplan_bath: floorplan_bath,
+      main_rating: main_rating,
+      security_rating: security_rating,
+      square_footage: square_footage,
+      notes: notes,
     });
   } catch (error) {
     console.error(error);
@@ -124,7 +156,11 @@ apartments.put("/", async (req, res) => {
 apartments.delete("/", async (req, res) => {
   const groupId = req.body.groupId;
   const apartmentId = req.body.apartmentId;
-  const apartmentRef = db.collection("groups").doc(groupId).collection("apartments").doc(apartmentId);
+  const apartmentRef = db
+    .collection("groups")
+    .doc(groupId)
+    .collection("apartments")
+    .doc(apartmentId);
 
   // Check that the apartment document exists
   const apartmentDoc = await apartmentRef.get();

@@ -48,7 +48,7 @@ function HousingDialogContent({ onSubmit, onClose }) {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     // Check if required fields are empty
     if (formData.name === "" || formData.address === "") {
@@ -57,12 +57,10 @@ function HousingDialogContent({ onSubmit, onClose }) {
     } else {
       setNameValid(true);
       setAddressValid(true);
-      const housingCardData = { formData };
       // call api to create a new housing card
-      onSubmit(housingCardData);
+      await onSubmit(formData);
 
       //reset the form
-      onClose();
       setFormData({
         name: "",
         address: "",

@@ -28,7 +28,7 @@ export const AmenitiesIcon = (props) => {
         width: props.size === "small" ? "50px" : "75px",
         height: props.size === "small" ? "50px" : "75px",
         marginRight: props.marginRight,
-        marginBottom: props.marginBottom,
+        marginBottom: 5,
         borderRadius: "50%",
         alignItems: "center",
         justifyContent: "center",
