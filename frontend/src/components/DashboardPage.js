@@ -77,6 +77,7 @@ function DashboardPage() {
 
   const handleCreateHousingCard = (housingCardData) => {
     console.log(housingCardData); // handle the submitted housing card data here
+    
     handleDialogClose("housingCard");
   };
 
@@ -84,7 +85,7 @@ function DashboardPage() {
     setVal(event.target.value);
   };
 
-  //create profile
+  //update existing apartment card
   async function updateApartment() {
     await fetch(`http://${process.env.REACT_APP_HOSTNAME}/apartments`, {
       method: "PUT", // *GET, POST, PUT, DELETE, etc.
@@ -122,6 +123,7 @@ function DashboardPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     console.log(formData);
+    // also update localData
     // try {
     //   await updateApartment(); // wait for updateApartment to complete
     // } catch (error) {
@@ -161,7 +163,7 @@ function DashboardPage() {
   //RUNS ON FIRST RENDER to get groupID, if it exists
   useEffect(() => {
     const userID = window.localStorage.getItem("userID");
-    console.log("userID" + userID);
+    console.log("userID: " + userID);
     let url = `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`;
     const fetchData = async () => {
       try {
@@ -215,7 +217,7 @@ function DashboardPage() {
           });
           console.log("groupData:", groupData);
           console.log("apartmentData:", groupData.apartmentsData);
-          console.log("test: ", groupData.apartmentsData[0].amenities);
+          console.log("test: ", groupData.apartmentsData[0].id);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -317,11 +319,14 @@ function DashboardPage() {
   const [open, setOpen] = React.useState(false);
 
   const iconSelect = (icon) => {
+    const amenities = formData.amenities.includes(icon)
+      ? formData.amenities.filter((amenity) => amenity !== icon)
+      : [...formData.amenities, icon];
+
     setFormData({
       ...formData,
-      amenities: [...formData.amenities, icon],
+      amenities,
     });
-    console.log(formData);
   };
 
   const handleOpen = (props) => {
@@ -577,6 +582,8 @@ function DashboardPage() {
                               <AmenitiesIcon
                                 key={index}
                                 iconName={icon}
+                                clickable={true}
+                                active={formData.amenities.includes(icon)}
                                 size="small"
                                 marginRight={12}
                                 marginBottom={20}
@@ -834,6 +841,7 @@ function DashboardPage() {
                           <AmenitiesIcon
                             key={index}
                             active="true"
+                            clickable={false}
                             iconName={icon}
                             size="small"
                             marginRight={12}

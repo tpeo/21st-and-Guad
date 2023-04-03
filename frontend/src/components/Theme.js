@@ -1,11 +1,25 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ButtonBase } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 
 export const AmenitiesIcon = (props) => {
   // Set up a state variable for hover
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(props.active);
+
+  useEffect(() => {
+    setActive(props.active);
+  }, [props.active, props.reset]);
+
+  const handleClick = () => {
+    if (props.clickable) {
+      setActive(!active);
+      if (props.onClick) {
+        props.onClick();
+      }
+    }
+  };
 
   return (
     <ButtonBase
@@ -27,20 +41,13 @@ export const AmenitiesIcon = (props) => {
           : //active is false
             // hover
             // ? appTheme.palette.primary.darkgrey :
-           appTheme.palette.primary.lightgrey
+            appTheme.palette.primary.lightgrey,
       }}
       // Add event handlers to change the hover state
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       // Add an onClick handler to the button
-      onClick={() => {
-        // Toggle the 'active' state
-        setActive(!active);
-        // Call the 'onClick' prop if it exists (for custom functions)
-        if (props.onClick) {
-          props.onClick();
-        }
-      }}
+      onClick={handleClick}
     >
       <img
         // Set the image source based on the 'iconName' prop
@@ -55,6 +62,25 @@ export const AmenitiesIcon = (props) => {
         }}
         alt={props.iconName}
       />
+      {hover && (
+        <div>
+          <span
+            style={{
+              position: "absolute",
+              bottom: "110%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              padding: "8px",
+              borderRadius: "4px",
+              backgroundColor: "#333",
+              color: "#fff",
+              fontSize: "14px",
+            }}
+          >
+            {props.iconName}
+          </span>
+        </div>
+      )}
     </ButtonBase>
   );
 };
@@ -67,7 +93,7 @@ export const appTheme = createTheme({
       darkgrey: "#838181",
       grey2: "#F5F5F5",
       white: "#FFFFFF",
-      lightyellow: "#fefdfa"
+      lightyellow: "#fefdfa",
     },
     secondary: {
       main: "#D9D9D9",
