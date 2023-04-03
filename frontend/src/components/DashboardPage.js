@@ -195,7 +195,6 @@ function DashboardPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
     try {
       await updateApartment(); // wait for updateApartment to complete
       handleClose();
@@ -231,6 +230,10 @@ function DashboardPage() {
   });
 
   const [localData, setLocalData] = useState({ users: [], apartmentData: [] });
+  useEffect(() => {
+    // Convert localData to JSON string and store it in window.localStorage
+    localStorage.setItem("apartmentData", JSON.stringify(localData.apartmentData));
+  }, [localData.apartmentData]);
 
   const [userGroupID, setUserGroupID] = useState(
     window.localStorage.getItem("groupID")
@@ -292,8 +295,6 @@ function DashboardPage() {
             apartmentData: groupData.apartmentsData,
           });
           console.log("groupData:", groupData);
-          // console.log("apartmentData:", groupData.apartmentsData);
-          // console.log("test: ", groupData.apartmentsData[0].id);
         }
       } catch (error) {
         console.error("Error fetching data:", error);

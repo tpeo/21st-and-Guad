@@ -66,6 +66,15 @@ const mapStyles = [
     elementType: "geometry.stroke",
     stylers: [{ color: "#fefefe" }, { lightness: 17 }, { weight: 1.2 }],
   },
+  {
+    featureType: "poi.business",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "labels.icon",
+    stylers: [{ visibility: "off" }],
+  },
 ];
 
 export default mapStyles;
