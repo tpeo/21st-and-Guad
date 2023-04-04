@@ -8,18 +8,20 @@ import {
   Toolbar,
   InputAdornment,
   Rating,
+  FormHelperText,
 } from "@mui/material";
 import { ArrowBackIosNew } from "@mui/icons-material";
 import { AMENITIES_ARRAY } from "../../utils/constants";
 import { AmenitiesIcon } from "../Theme";
 import { ThemeProvider } from "@emotion/react";
 import { appTheme } from "../Theme";
+import AddressSearchBar from "../maps/AddressSearchBar";
 
 function HousingDialogContent({ onSubmit, onClose }) {
   const [nameValid, setNameValid] = useState(true);
-  const [addressValid, setAddressValid] = useState(true);
   const [resetAmenities, setResetAmenities] = useState(false);
-
+  const [address, setAddress] = useState("");
+  const [addressValid, setAddressValid] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -131,35 +133,26 @@ function HousingDialogContent({ onSubmit, onClose }) {
             sx={{
               fontWeight: 600,
               fontSize: 17,
-              mt: 1,
-              mb: -1,
+              mt: 0,
+              mb: 1,
             }}
           >
             Address
           </Typography>
 
-          <TextField
-            margin="normal"
-            required
-            id="address"
-            name="address"
-            sx={{ mb: 2.5, width: 450 }}
-            error={!addressValid}
-            helperText={!addressValid && "Valid address is required"}
-            value={formData.address}
-            onChange={(e) => {
-              setFormData({
-                ...formData,
-                address: e.target.value,
-              });
-              setAddressValid(true);
-            }}
-          />
+          <AddressSearchBar
+            formData={formData}
+            setFormData={setFormData}
+            address={address}
+            setAddress={setAddress}
+            addressValid={addressValid}
+            setAddressValid={setAddressValid}
+          ></AddressSearchBar>
 
           <Typography
             component="h5"
             width="500"
-            sx={{ fontWeight: 600, fontSize: 17, mb: -1 }}
+            sx={{ fontWeight: 600, fontSize: 17, mb: -1, mt: 1 }}
           >
             Phone Number
           </Typography>

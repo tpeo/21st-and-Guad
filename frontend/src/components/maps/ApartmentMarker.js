@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PersonPinCircleRoundedIcon from "@mui/icons-material/PersonPinCircleRounded";
+import RoomIcon from '@mui/icons-material/Room';
 import { Typography, Box } from "@mui/material";
 
 function ApartmentMarker(props) {
@@ -21,7 +21,7 @@ function ApartmentMarker(props) {
           style={{ position: "absolute", transform: "translate(-50%, -100%)" }}
           onClick={handleClick}
         >
-          <PersonPinCircleRoundedIcon fontSize="large" />
+          <RoomIcon fontSize="large" />
           {selectedApartment && selectedApartment.id === props.data.id && (
             <Box
               style={{

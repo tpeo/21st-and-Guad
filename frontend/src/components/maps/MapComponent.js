@@ -1,15 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GoogleMapReact from "google-map-react";
+import Marker from 'google-map-react';
 import mapStyles from "./mapStyles";
 import { Box } from "@mui/system";
 import { Button } from "@mui/material";
-import PersonPinCircleRoundedIcon from "@mui/icons-material/PersonPinCircleRounded";
 import ApartmentMarker from "./ApartmentMarker";
-
-//custom marker for anything on the map. can be duplicated or edited later
-const Marker = ({ text }) => (
-  <PersonPinCircleRoundedIcon fontSize="large"></PersonPinCircleRoundedIcon>
-);
 
 //constant UT Tower Lat/Long for default location
 const UT_TOWER_COORDS = { lat: 30.28622889164585, lng: -97.73936994834247 };
@@ -54,6 +49,10 @@ function MapComponent({ apiKey }) {
           setCenter({ lat: latitude, lng: longitude });
           setZoom(18);
           setUserLocation({ lat: latitude, lng: longitude });
+          new window.google.maps.Marker({
+            position: { lat: latitude, lng: longitude },
+            map: mapRef.current,
+          });
         },
         (error) => console.log(error),
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
@@ -79,6 +78,8 @@ function MapComponent({ apiKey }) {
       })
     ).then((updatedData) => setApartmentData(updatedData));
   }, [center, zoom]);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const mapRef = useRef(null);
 
   return (
     <Box style={{ height: "100%", width: "100%", position: "relative" }}>
@@ -88,23 +89,24 @@ function MapComponent({ apiKey }) {
         zoom={zoom}
         options={{
           styles: mapStyles,
-          resetBoundsOnResize: true,
-          resetBoundsOnZoomChange: true,
         }}
         style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+        yesIWantToUseGoogleMapApiInternals
+        onGoogleApiLoaded={({ map }) => {
+          mapRef.current = map;
+          setMapLoaded(true);
+        }}
         onChange={({ center, zoom }) => {
           setClicked(false);
           setCenter(center);
           setZoom(zoom);
         }}
+        onIdle={() => {
+          if (mapLoaded && userLocation) {
+            setUserLocation({ ...userLocation });
+          }
+        }}
       >
-        {userLocation && (
-          <Marker
-            lat={userLocation.lat}
-            lng={userLocation.lng}
-            text="My Marker"
-          />
-        )}
         {apartmentData.map((apartment) => (
           <ApartmentMarker
             id={`marker-${apartment.id}`}
