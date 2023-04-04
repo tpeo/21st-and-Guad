@@ -83,11 +83,102 @@ function HousingDialogContent({ onSubmit, onClose }) {
     }
   };
 
+  // Define a function to geocode an address and return the latitude and longitude
+  async function geocodeAddress(address) {
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+        address
+      )}&key=${process.env.REACT_APP_MAPS_API_KEY}`
+    );
+    const data = await response.json();
+
+    if (data.results.length === 0) {
+      throw new Error("Invalid address");
+    }
+
+    const location = data.results[0].geometry.location;
+    return { lat: location.lat, lng: location.lng };
+  }
+
+  const getDistance = async (origin, destination) => {
+    const originCoords = await geocodeAddress(origin);
+    const destCoords = await geocodeAddress(destination);
+
+    const toRadians = (deg) => deg * (Math.PI / 180);
+    const R = 3958.8; // radius of the Earth in miles
+
+    const dLat = toRadians(destCoords.lat - originCoords.lat);
+    const dLon = toRadians(destCoords.lng - originCoords.lng);
+    const lat1 = toRadians(originCoords.lat);
+    const lat2 = toRadians(destCoords.lat);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    return distance.toFixed(2);
+  };
+
+  // Calculate distance when formData changes
+  useEffect(() => {
+    const origin = window.localStorage.getItem("address");
+    const destination = formData.address;
+
+    async function fetchDistance() {
+      try {
+        const result = await getDistance(origin, destination);
+        setFormData({
+          ...formData,
+          distance: result,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    if (origin && destination) {
+      fetchDistance();
+    }
+  }, [formData.address]);
+
+  // Handle address change
+  const handleAddressChange = async (newValue) => {
+    await setFormData({
+      ...formData,
+      address: newValue,
+    });
+  };
+
   return (
     <ThemeProvider theme={appTheme}>
       <Box width={800}>
         <Toolbar sx={{ pl: 0, marginTop: "-12px", marginLeft: "-12px" }}>
-          <IconButton color="inherit" edge="start" onClick={() => onClose()}>
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={() => {
+              setFormData({
+                name: "",
+                address: "",
+                amenities: [],
+                distance: "",
+                floorplan_bed: 0,
+                floorplan_bath: 0,
+                main_rating: 0,
+                phone_number: "",
+                price_high: 0,
+                price_low: 0,
+                security_rating: 0,
+                square_footage: "",
+                notes: "",
+              });
+              setAddress("");
+              setResetAmenities(true);
+              onClose();
+            }}
+          >
             <ArrowBackIosNew />
             <Typography>Back</Typography>
           </IconButton>
@@ -147,6 +238,7 @@ function HousingDialogContent({ onSubmit, onClose }) {
             setAddress={setAddress}
             addressValid={addressValid}
             setAddressValid={setAddressValid}
+            onAddressChange={handleAddressChange}
           ></AddressSearchBar>
 
           <Typography
@@ -194,9 +286,9 @@ function HousingDialogContent({ onSubmit, onClose }) {
           <Typography
             component="h5"
             width="500"
-            sx={{ fontWeight: 700, fontSize: 17, mb: 2 }}
+            sx={{ fontWeight: 700, fontSize: 17, mb: 2, mt: 1 }}
           >
-            Distance
+            Distance from: {window.localStorage.getItem("address")}
           </Typography>
 
           <TextField
@@ -207,13 +299,14 @@ function HousingDialogContent({ onSubmit, onClose }) {
               endAdornment: (
                 <InputAdornment position="end">miles</InputAdornment>
               ),
+              readOnly: true,
             }}
             sx={{ mb: 2.5, mt: -1 }}
             value={formData.distance}
             onChange={(e) => {
               setFormData({
                 ...formData,
-                phone_number: e.target.value,
+                distance: e.target.value,
               });
             }}
           />

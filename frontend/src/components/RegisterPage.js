@@ -74,6 +74,7 @@ function RegisterPage() {
     first_preference: "",
     second_preference: "",
     third_preference: "",
+    address: "UT Tower, Inner Campus Drive, Austin, TX, USA",
     price: 0,
     distance: 0,
   });
@@ -106,6 +107,7 @@ function RegisterPage() {
         first_preference: formData.first_preference,
         second_preference: formData.second_preference,
         third_preference: formData.third_preference,
+        address: formData.address,
         price: formData.price,
         distance: formData.distance,
       }),
@@ -174,7 +176,7 @@ function RegisterPage() {
                   disableElevation
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Submit
+                  Sign Up
                 </Button>
               )}
 

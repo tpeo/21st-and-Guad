@@ -208,6 +208,7 @@ function DashboardPage() {
     first_preference: "",
     second_preference: "",
     third_preference: "",
+    address: "",
     distance: "",
     price: "",
   });
@@ -263,12 +264,14 @@ function DashboardPage() {
         const groupID = data.group[0] || null;
         setUserGroupID(groupID);
         window.localStorage.setItem("groupID", groupID);
+        window.localStorage.setItem("address", data.address);
         console.log("groupID: " + groupID);
         setUserData({
           name: data.name,
           first_preference: data.first_preference,
           second_preference: data.second_preference,
           third_preference: data.third_preference,
+          address: data.address,
           distance: data.distance,
           price: data.price,
         });
@@ -335,7 +338,6 @@ function DashboardPage() {
       tooltipTitle: "Add Apartment",
       delay: 100,
       onClick: () => {
-        console.log("add apartment");
         handleDialogOpen("housingCard");
       },
     },
@@ -344,7 +346,6 @@ function DashboardPage() {
       name: "Add Group Member",
       tooltipTitle: "Add Group Member",
       onClick: () => {
-        console.log("add group member");
         handleDialogOpen("group");
       },
     },
@@ -353,7 +354,7 @@ function DashboardPage() {
       name: "Save",
       tooltipTitle: "Save",
       onClick: () => {
-        console.log("save");
+        
       },
     },
   ];

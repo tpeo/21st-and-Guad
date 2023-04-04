@@ -34,6 +34,7 @@ profiles.post("/", async (req, res) => {
       third_preference: body.third_preference,
       price: body.price,
       distance: body.distance,
+      address: body.address,
       group: [],
     });
     res.status(200).json({ message: "OK" });

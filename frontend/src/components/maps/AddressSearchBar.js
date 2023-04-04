@@ -1,19 +1,27 @@
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { FormHelperText } from '@mui/material';
 import { appTheme } from '../Theme';
+import { useEffect } from "react";
 
-const AddressSearchBar = ({ formData, setFormData, address, setAddress, addressValid, setAddressValid }) => {
+
+const AddressSearchBar = ({ formData, setFormData, address, setAddress, addressValid, setAddressValid, onAddressChange }) => {
+  
+  useEffect(() => {
+    if (onAddressChange) {
+      onAddressChange(formData.address);
+    }
+  }, [formData.address]);
+  
   return (
     <>
       <GooglePlacesAutocomplete
         selectProps={{
-          value: address,
+          value: address.label,
           onChange: async (newValue) => {
             await setFormData({
               ...formData,
               address: newValue.label,
             });
-            setAddress(newValue);
             setAddressValid(true);
           },
           styles: {
@@ -62,6 +70,11 @@ const AddressSearchBar = ({ formData, setFormData, address, setAddress, addressV
           },
         }}
         apiKey={process.env.REACT_APP_MAPS_API_KEY}
+        autocompletionRequest={{
+          componentRestrictions: {
+            country: ["us"],
+          },
+        }}
       />
       {!addressValid && (
         <FormHelperText error>Please enter a valid address</FormHelperText>
