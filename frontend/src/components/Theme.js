@@ -1,7 +1,6 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { ButtonBase } from "@mui/material";
+import { ButtonBase, Tooltip, Zoom } from "@mui/material";
 import { useState, useEffect } from "react";
-
 
 export const AmenitiesIcon = (props) => {
   // Set up a state variable for hover
@@ -22,66 +21,49 @@ export const AmenitiesIcon = (props) => {
   };
 
   return (
-    <ButtonBase
-      style={{
-        // Set the width and height of the button based on the 'size' prop
-        width: props.size === "small" ? "50px" : "75px",
-        height: props.size === "small" ? "50px" : "75px",
-        marginRight: props.marginRight,
-        marginBottom: 5,
-        borderRadius: "50%",
-        alignItems: "center",
-        justifyContent: "center",
-        // Set the background color of the button based on the 'active' prop and the hover state
-        backgroundColor: active
-          ? //active is true
-            hover
-            ? appTheme.palette.primary.light
-            : appTheme.palette.primary.main
-          : //active is false
-            // hover
-            // ? appTheme.palette.primary.darkgrey :
-            appTheme.palette.primary.lightgrey,
-      }}
-      // Add event handlers to change the hover state
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      // Add an onClick handler to the button
-      onClick={handleClick}
-    >
-      <img
-        // Set the image source based on the 'iconName' prop
-        src={
-          process.env.PUBLIC_URL +
-          `/images/amenitiesIcons/${props.iconName}.png`
-        }
+    <Tooltip title={props.iconName} arrow TransitionComponent={Zoom}>
+      <ButtonBase
         style={{
-          // Set the maximum width and height of the image based on the 'size' prop
-          maxWidth: props.size === "small" ? "30px" : "50px",
-          maxHeight: props.size === "small" ? "30px" : "50px",
+          // Set the width and height of the button based on the 'size' prop
+          width: props.size === "small" ? "50px" : "75px",
+          height: props.size === "small" ? "50px" : "75px",
+          marginRight: props.marginRight,
+          marginBottom: 5,
+          borderRadius: "50%",
+          alignItems: "center",
+          justifyContent: "center",
+          // Set the background color of the button based on the 'active' prop and the hover state
+          backgroundColor: active
+            ? //active is true
+              hover
+              ? appTheme.palette.primary.light
+              : appTheme.palette.primary.main
+            : //active is false
+              // hover
+              // ? appTheme.palette.primary.darkgrey :
+              appTheme.palette.primary.lightgrey,
         }}
-        alt={props.iconName}
-      />
-      {hover && (
-        <div>
-          <span
-            style={{
-              position: "absolute",
-              bottom: "110%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              padding: "8px",
-              borderRadius: "4px",
-              backgroundColor: "#333",
-              color: "#fff",
-              fontSize: "14px",
-            }}
-          >
-            {props.iconName}
-          </span>
-        </div>
-      )}
-    </ButtonBase>
+        // Add event handlers to change the hover state
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        // Add an onClick handler to the button
+        onClick={handleClick}
+      >
+        <img
+          // Set the image source based on the 'iconName' prop
+          src={
+            process.env.PUBLIC_URL +
+            `/images/amenitiesIcons/${props.iconName}.png`
+          }
+          style={{
+            // Set the maximum width and height of the image based on the 'size' prop
+            maxWidth: props.size === "small" ? "30px" : "50px",
+            maxHeight: props.size === "small" ? "30px" : "50px",
+          }}
+          alt={props.iconName}
+        />
+      </ButtonBase>
+    </Tooltip>
   );
 };
 

@@ -4,11 +4,8 @@ import {
   AccordionSummary,
   AccordionDetails,
   Button,
-  Select,
   Typography,
   IconButton,
-  MenuItem,
-  FormControl,
   Avatar,
   Box,
   Grid,
@@ -20,37 +17,30 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   Modal,
-  Paper,
-  ListItem,
   Rating,
   TextField,
-  InputProps,
   InputAdornment,
   Dialog,
   DialogActions,
   DialogContent,
   Zoom,
 } from "@mui/material";
-
-import { ThemeProvider, styled } from "@mui/material/styles";
-
+import { ThemeProvider } from "@mui/material/styles";
 import { appTheme, AmenitiesIcon } from "./Theme.js";
 import {
-  Add,
   Save,
   Hive,
-  MenuIcon,
   ExpandMore as ExpandMoreIcon,
-  AccountCircleRounded,
 } from "@mui/icons-material";
-
+import HorizontalScroll from 'react-horizontal-scrolling'
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Carousel from "react-material-ui-carousel";
 import NavBar from "./NavBar.js";
 import HousingDialogContent from "./cards/HousingDialogContent.js";
 import AddGroupDialog from "./cards/AddGroupDialog.js";
 import NoGroups from "./cards/NoGroups.js";
-//import SpeedDialButton from "./SpeedDialButton.js";
+import { getDistance } from "../utils/locations.js";
+import AddressSearchBar from "./maps/AddressSearchBar.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   //return <Slide direction="up" ref={ref} {...props} />;
@@ -58,8 +48,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function DashboardPage() {
-  const [val, setVal] = useState("");
-
   // create an object to hold the open/close state and handlers for the different dialogs
   const [dialogs, setDialogs] = useState({
     speedDial: false,
@@ -84,10 +72,6 @@ function DashboardPage() {
     }
     handleDialogClose("housingCard");
   }
-
-  const handleChange = (event) => {
-    setVal(event.target.value);
-  };
 
   //create an apartment card
   async function createApartment(newFormData) {
@@ -233,7 +217,10 @@ function DashboardPage() {
   const [localData, setLocalData] = useState({ users: [], apartmentData: [] });
   useEffect(() => {
     // Convert localData to JSON string and store it in window.localStorage
-    localStorage.setItem("apartmentData", JSON.stringify(localData.apartmentData));
+    localStorage.setItem(
+      "apartmentData",
+      JSON.stringify(localData.apartmentData)
+    );
   }, [localData.apartmentData]);
 
   const [userGroupID, setUserGroupID] = useState(
@@ -242,7 +229,6 @@ function DashboardPage() {
   //RUNS ON FIRST RENDER to get groupID, if it exists
   useEffect(() => {
     const userID = window.localStorage.getItem("userID");
-    console.log("userID: " + userID);
     let url = `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`;
     const fetchData = async () => {
       try {
@@ -265,7 +251,6 @@ function DashboardPage() {
         setUserGroupID(groupID);
         window.localStorage.setItem("groupID", groupID);
         window.localStorage.setItem("address", data.address);
-        console.log("groupID: " + groupID);
         setUserData({
           name: data.name,
           first_preference: data.first_preference,
@@ -353,9 +338,7 @@ function DashboardPage() {
       icon: <Save />,
       name: "Save",
       tooltipTitle: "Save",
-      onClick: () => {
-        
-      },
+      onClick: () => {},
     },
   ];
 
@@ -428,6 +411,38 @@ function DashboardPage() {
   };
 
   const handleClose = () => setOpen(false);
+  const [address, setAddress] = useState(formData.address);
+  const [addressValid, setAddressValid] = useState(true);
+
+  // Handle address change
+  const handleAddressChange = async (newValue) => {
+    await setFormData({
+      ...formData,
+      address: newValue,
+    });
+  };
+
+  // Calculate distance when formData changes
+  useEffect(() => {
+    const origin = window.localStorage.getItem("address");
+    const destination = formData.address;
+
+    async function fetchDistance() {
+      try {
+        const result = await getDistance(origin, destination);
+        setFormData({
+          ...formData,
+          distance: result,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    if (origin && destination) {
+      fetchDistance();
+    }
+  }, [formData.address]);
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -442,7 +457,7 @@ function DashboardPage() {
             spacing={0}
             direction="column"
             alignItems="center"
-            style={{ minHeight: "150vh", mb: 20 }}
+            style={{ minHeight: "137vh", mb: 20 }}
           >
             <Grid
               item
@@ -608,26 +623,25 @@ function DashboardPage() {
                                 fontWeight: 700,
                                 fontSize: 17,
                                 mt: 1,
-                                mb: -1,
+                                mb: 1,
                               }}
                             >
                               Address
                             </Typography>
 
-                            <TextField
-                              margin="normal"
-                              required
-                              id="address"
-                              name="address"
-                              sx={{ mb: 2.5, width: 450 }}
-                              value={formData.address}
-                              onChange={(e) => {
-                                setFormData({
-                                  ...formData,
-                                  address: e.target.value,
-                                });
-                              }}
-                            />
+                            <AddressSearchBar
+                              formData={formData}
+                              setFormData={setFormData}
+                              address={formData.address}
+                              setAddress={setAddress}
+                              addressValid={addressValid}
+                              setAddressValid={setAddressValid}
+                              onAddressChange={handleAddressChange}
+                            ></AddressSearchBar>
+
+                            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                              Current Address: {formData.address}
+                            </Typography>
 
                             <Typography
                               component="h5"
@@ -676,9 +690,15 @@ function DashboardPage() {
                             <Typography
                               component="h5"
                               width="500"
-                              sx={{ fontWeight: 700, fontSize: 17, mb: 2 }}
+                              sx={{
+                                fontWeight: 700,
+                                fontSize: 17,
+                                mb: 2,
+                                mt: 1,
+                              }}
                             >
-                              Distance
+                              Distance from{" "}
+                              {window.localStorage.getItem("address")}
                             </Typography>
 
                             <TextField
@@ -940,12 +960,13 @@ function DashboardPage() {
 
                         <Typography
                           variant="h3"
-                          sx={{ fontWeight: 700, fontSize: 18, mt: 4, mb: 1 }}
+                          sx={{ fontWeight: 700, fontSize: 18, mt: 3, mb: 1 }}
                         >
                           Amenities
                         </Typography>
-
-                        {elem.amenities.map((icon, index) => (
+                        
+                        <HorizontalScroll style={{ overflowX: "hidden" }}>
+                          {elem.amenities.map((icon, index) => (
                           <AmenitiesIcon
                             key={index}
                             active="true"
@@ -955,6 +976,7 @@ function DashboardPage() {
                             marginRight={12}
                           />
                         ))}
+                        </HorizontalScroll>
 
                         <Typography
                           variant="h3"
@@ -971,7 +993,7 @@ function DashboardPage() {
                             fontWeight: 400,
                             borderColor: appTheme.palette.secondary.main,
                             borderRadius: 1,
-                            width: 90,
+                            width: 110,
                             paddingLeft: 1,
                             mt: 1,
                             mb: 1,
@@ -984,7 +1006,10 @@ function DashboardPage() {
                           variant="h3"
                           sx={{ fontWeight: 700, fontSize: 18, mt: 2 }}
                         >
-                          Price (per month)
+                          Price {" "}
+                          <Typography component="span" fontWeight={400}>
+                            (per month)
+                          </Typography>
                         </Typography>
 
                         <Slider
@@ -996,6 +1021,22 @@ function DashboardPage() {
                           min={0}
                           max={2000}
                           valueLabelDisplay="auto"
+                          marks={[
+                            {
+                              value: 0,
+                              label: "$0",
+                            },
+                            {
+                              value: 2000,
+                              label: "$2000",
+                            },
+                          ]}
+                          sx={{
+                            width: "90%",
+                            marginLeft: 2,
+                            marginRight: "auto",
+                            "& .MuiSlider-track": { color: "black" },
+                          }}
                         />
 
                         <Typography
