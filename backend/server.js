@@ -42,6 +42,9 @@ const auth = (req, res, next) => {
 // Export the app as a function that Vercel can use
 module.exports = app;
 
+// Export the app as a function that Vercel can use
+module.exports = app;
+
 app.listen(4000, () => {
   console.log("Server running on port 4000");
 });

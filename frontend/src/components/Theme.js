@@ -1,61 +1,69 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { ButtonBase } from "@mui/material";
-import { useState } from "react";
+import { ButtonBase, Tooltip, Zoom } from "@mui/material";
+import { useState, useEffect } from "react";
 
 export const AmenitiesIcon = (props) => {
   // Set up a state variable for hover
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(props.active);
 
+  useEffect(() => {
+    setActive(props.active);
+  }, [props.active, props.reset]);
+
+  const handleClick = () => {
+    if (props.clickable) {
+      setActive(!active);
+      if (props.onClick) {
+        props.onClick();
+      }
+    }
+  };
+
   return (
-    <ButtonBase
-      style={{
-        // Set the width and height of the button based on the 'size' prop
-        width: props.size === "small" ? "50px" : "75px",
-        height: props.size === "small" ? "50px" : "75px",
-        marginRight: props.marginRight,
-        marginBottom: props.marginBottom,
-        borderRadius: "50%",
-        alignItems: "center",
-        justifyContent: "center",
-        // Set the background color of the button based on the 'active' prop and the hover state
-        backgroundColor: active
-          ? //active is true
-            hover
-            ? appTheme.palette.primary.light
-            : appTheme.palette.primary.main
-          : //active is false
-            // hover
-            // ? appTheme.palette.primary.darkgrey :
-           appTheme.palette.primary.lightgrey
-      }}
-      // Add event handlers to change the hover state
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      // Add an onClick handler to the button
-      onClick={() => {
-        // Toggle the 'active' state
-        setActive(!active);
-        // Call the 'onClick' prop if it exists (for custom functions)
-        if (props.onClick) {
-          props.onClick();
-        }
-      }}
-    >
-      <img
-        // Set the image source based on the 'iconName' prop
-        src={
-          process.env.PUBLIC_URL +
-          `/images/amenitiesIcons/${props.iconName}.png`
-        }
+    <Tooltip title={props.iconName} arrow TransitionComponent={Zoom}>
+      <ButtonBase
         style={{
-          // Set the maximum width and height of the image based on the 'size' prop
-          maxWidth: props.size === "small" ? "30px" : "50px",
-          maxHeight: props.size === "small" ? "30px" : "50px",
+          // Set the width and height of the button based on the 'size' prop
+          width: props.size === "small" ? "50px" : "75px",
+          height: props.size === "small" ? "50px" : "75px",
+          marginRight: props.marginRight,
+          marginBottom: 5,
+          borderRadius: "50%",
+          alignItems: "center",
+          justifyContent: "center",
+          // Set the background color of the button based on the 'active' prop and the hover state
+          backgroundColor: active
+            ? //active is true
+              hover
+              ? appTheme.palette.primary.light
+              : appTheme.palette.primary.main
+            : //active is false
+              // hover
+              // ? appTheme.palette.primary.darkgrey :
+              appTheme.palette.primary.lightgrey,
         }}
-        alt={props.iconName}
-      />
-    </ButtonBase>
+        // Add event handlers to change the hover state
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        // Add an onClick handler to the button
+        onClick={handleClick}
+      >
+        <img
+          // Set the image source based on the 'iconName' prop
+          src={
+            process.env.PUBLIC_URL +
+            `/images/amenitiesIcons/${props.iconName}.png`
+          }
+          style={{
+            // Set the maximum width and height of the image based on the 'size' prop
+            maxWidth: props.size === "small" ? "30px" : "50px",
+            maxHeight: props.size === "small" ? "30px" : "50px",
+          }}
+          alt={props.iconName}
+        />
+      </ButtonBase>
+    </Tooltip>
   );
 };
 
@@ -67,7 +75,7 @@ export const appTheme = createTheme({
       darkgrey: "#838181",
       grey2: "#F5F5F5",
       white: "#FFFFFF",
-      lightyellow: "#fefdfa"
+      lightyellow: "#fefdfa",
     },
     secondary: {
       main: "#D9D9D9",

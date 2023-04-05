@@ -57,13 +57,17 @@ groups.get("/:groupId", async (req, res) => {
 
     // Get apartments sub-collection data
     const apartmentsCollection = groupRef.collection("apartments");
-    const apartmentsDocs = await apartmentsCollection.get();
-    const apartmentsData = apartmentsDocs.docs.map((doc) => doc.data());
+    const apartmentsData = await apartmentsCollection.get();
+    const formattedApartments = apartmentsData.docs.map((doc) => {
+      const apartment = doc.data();
+      apartment.id = doc.id;
+      return apartment;
+    });
 
     // returns a JSON with a users array and apartmentData - an array of JSONs
     res.status(200).json({
       users: groupData.users,
-      apartmentsData: apartmentsData,
+      apartmentsData: formattedApartments,
     });
   }
 });
