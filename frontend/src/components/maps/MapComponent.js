@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import GoogleMapReact from "google-map-react";
-import Marker from 'google-map-react';
+import Marker from "google-map-react";
 import mapStyles from "./mapStyles";
 import { Box } from "@mui/system";
 import { Button } from "@mui/material";
 import ApartmentMarker from "./ApartmentMarker";
+import SpecialMarker from "./SpecialMarker";
 
 //constant UT Tower Lat/Long for default location
 const UT_TOWER_COORDS = { lat: 30.28622889164585, lng: -97.73936994834247 };
+
 
 function MapComponent({ apiKey }) {
   // Retrieve localData from window.localStorage and parse the JSON string back to an object
@@ -60,9 +62,26 @@ function MapComponent({ apiKey }) {
     }
   }, [clicked]);
 
-  const getCurrentLocation = () => {
+  const getCurrentLocation = async () => {
     setClicked(true);
   };
+
+  // Define a state variable to store the location and address
+  const [specialLocation, setSpecialLocation] = useState(null);
+
+  // Define a useEffect hook to get the location when the component mounts
+  useEffect(() => {
+    const address = window.localStorage.getItem("address");
+    if (address) {
+      geocodeAddress(address)
+        .then((result) => {
+          setSpecialLocation(result);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, []);
 
   // When the component mounts, geocode each address and add the lat/lng coordinates to the apartment data
   useEffect(() => {
@@ -116,6 +135,11 @@ function MapComponent({ apiKey }) {
             data={apartment}
           />
         ))}
+        {specialLocation && (<SpecialMarker
+            lat={specialLocation.location.lat}
+            lng={specialLocation.location.lng}
+          />)}
+        
       </GoogleMapReact>
       <Button
         variant="contained"

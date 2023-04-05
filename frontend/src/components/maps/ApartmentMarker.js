@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import RoomIcon from '@mui/icons-material/Room';
+import RoomIcon from "@mui/icons-material/Room";
 import { Typography, Box } from "@mui/material";
 
 function ApartmentMarker(props) {
   const [selectedApartment, setSelectedApartment] = useState(null);
 
   const handleClick = () => {
-    if (selectedApartment && selectedApartment.id === props.data.id) {
+    if (selectedApartment && (selectedApartment.id === props.data.id)) {
       setSelectedApartment(null);
     } else {
       setSelectedApartment(props.data);
@@ -26,17 +26,28 @@ function ApartmentMarker(props) {
             <Box
               style={{
                 position: "absolute",
-                top: "50%",
-                left: `calc(${props.left}px + 1rem)`,
+                top: "-8rem",
+                left: "2rem",
                 width: "20rem",
-                height: "10rem",
+                height: "auto",
                 backgroundColor: "white",
                 padding: "1rem",
                 boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
+                zIndex: 100,
               }}
             >
+              <Box>
+                <iframe
+                  width="100%"
+                  height="200"
+                  style={{ border: 0 }}
+                  src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.REACT_APP_MAPS_API_KEY}&location=${props.lat},${props.lng}&heading=210&pitch=0`}
+                  allowFullScreen
+                ></iframe>
+              </Box>
               <Typography
                 sx={{
+                  marginTop: "0.5rem",
                   fontWeight: 700,
                   fontSize: 25,
                 }}
@@ -66,12 +77,18 @@ function ApartmentMarker(props) {
                   marginTop: "0.5rem",
                 }}
               >
-                Distance from you: 
+                Distance from {window.localStorage.getItem("address")}:
               </Typography>
               <Typography
+                variant="body1"
+                mt={1}
                 sx={{
                   fontWeight: 400,
                   fontSize: 15,
+                  width: "fit-content",
+                  border: "1px solid #ccc",
+                  borderRadius: "10px",
+                  padding: "5px 10px",
                 }}
               >
                 {props.data.distance} miles
