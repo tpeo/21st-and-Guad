@@ -125,7 +125,10 @@ function MapComponent({ apiKey }) {
             setUserLocation({ ...userLocation });
           }
         }}
-      >
+      >{specialLocation && (<SpecialMarker
+            lat={specialLocation.location.lat}
+            lng={specialLocation.location.lng}
+          />)}
         {apartmentData.map((apartment) => (
           <ApartmentMarker
             id={`marker-${apartment.id}`}
@@ -135,10 +138,7 @@ function MapComponent({ apiKey }) {
             data={apartment}
           />
         ))}
-        {specialLocation && (<SpecialMarker
-            lat={specialLocation.location.lat}
-            lng={specialLocation.location.lng}
-          />)}
+        
         
       </GoogleMapReact>
       <Button

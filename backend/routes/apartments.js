@@ -151,6 +151,37 @@ apartments.put("/", async (req, res) => {
   res.status(200).send(updatedApartmentDoc.data());
 });
 
+// updates the distance field of an apartment card using new data
+// takes in a groupId and apartmentId to find the document
+apartments.put("/:groupId/:apartmentId/distance", async (req, res) => {
+  const groupId = req.params.groupId;
+  const apartmentId = req.params.apartmentId;
+  const apartmentRef = db
+    .collection("groups")
+    .doc(groupId)
+    .collection("apartments")
+    .doc(apartmentId);
+
+  // Extract distance field from request body
+  const { distance } = req.body;
+
+  // Update the apartment document with new distance
+  try {
+    await apartmentRef.update({
+      distance: distance,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Failed to update apartment document");
+    return;
+  }
+
+  // Return the updated apartment document
+  const updatedApartmentDoc = await apartmentRef.get();
+  res.status(200).send(updatedApartmentDoc.data());
+});
+
+
 // deletes an apartment document
 // takes in a groupId and apartmentId to find the document
 apartments.delete("/", async (req, res) => {

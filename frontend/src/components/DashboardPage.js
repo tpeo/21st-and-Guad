@@ -27,12 +27,8 @@ import {
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme, AmenitiesIcon } from "./Theme.js";
-import {
-  Save,
-  Hive,
-  ExpandMore as ExpandMoreIcon,
-} from "@mui/icons-material";
-import HorizontalScroll from 'react-horizontal-scrolling'
+import { Save, Hive, ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
+import HorizontalScroll from "react-horizontal-scrolling";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Carousel from "react-material-ui-carousel";
 import NavBar from "./NavBar.js";
@@ -217,7 +213,7 @@ function DashboardPage() {
   const [localData, setLocalData] = useState({ users: [], apartmentData: [] });
   useEffect(() => {
     // Convert localData to JSON string and store it in window.localStorage
-    localStorage.setItem(
+    window.localStorage.setItem(
       "apartmentData",
       JSON.stringify(localData.apartmentData)
     );
@@ -251,6 +247,8 @@ function DashboardPage() {
         setUserGroupID(groupID);
         window.localStorage.setItem("groupID", groupID);
         window.localStorage.setItem("address", data.address);
+        window.localStorage.setItem("userData", JSON.stringify(data));
+
         setUserData({
           name: data.name,
           first_preference: data.first_preference,
@@ -422,11 +420,10 @@ function DashboardPage() {
     });
   };
 
-  // Calculate distance when formData changes
   useEffect(() => {
     const origin = window.localStorage.getItem("address");
     const destination = formData.address;
-
+  
     async function fetchDistance() {
       try {
         const result = await getDistance(origin, destination);
@@ -438,11 +435,40 @@ function DashboardPage() {
         console.error(error);
       }
     }
-
-    if (origin && destination) {
+  
+    // Only fetch new distance if address has changed
+    if (origin && destination && origin !== destination) {
       fetchDistance();
     }
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === "address") {
+        setFormData({
+          ...formData,
+          address: event.newValue,
+        });
+      }
+    });
+
   }, [formData.address]);
+
+  useEffect(() => {
+    function handleStorageChange(event) {
+      if (event.key === "apartmentData") {
+        setLocalData({
+          ...localData,
+          apartmentData: JSON.parse(event.newValue),
+        });
+      }
+    }
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [localData]);
+  
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -920,19 +946,39 @@ function DashboardPage() {
                               }}
                             />
                           </Box>
-
-                          <Box component="form" onSubmit={handleSubmit}>
-                            <Box>
-                              <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                sx={{ boxShadow: 0, mt: -1 }}
-                              >
-                                Submit
-                              </Button>
-                            </Box>
+                          <Box
+                            component="form"
+                            align="center"
+                            onSubmit={handleSubmit}
+                          >
+                            <Button
+                              type="submit"
+                              variant="contained"
+                              color="primary"
+                              display="flex"
+                              sx={{
+                                boxShadow: 1,
+                                mt: -1,
+                                width: 100,
+                                height: 40,
+                                color: "white",
+                              }}
+                            >
+                              Submit
+                            </Button>
                           </Box>
+                          <Typography
+                            align="center"
+                            sx={{
+                              fontWeight: 400,
+                              fontSize: 12,
+                              mt: 3,
+                              textDecoration: "underline",
+                              textDecorationColor: "black",
+                            }}
+                          >
+                            Delete Housing Card
+                          </Typography>
                         </Box>
                         {/* </form> */}
                       </Modal>
@@ -964,18 +1010,18 @@ function DashboardPage() {
                         >
                           Amenities
                         </Typography>
-                        
+
                         <HorizontalScroll style={{ overflowX: "hidden" }}>
                           {elem.amenities.map((icon, index) => (
-                          <AmenitiesIcon
-                            key={index}
-                            active="true"
-                            clickable={false}
-                            iconName={icon}
-                            size="small"
-                            marginRight={12}
-                          />
-                        ))}
+                            <AmenitiesIcon
+                              key={index}
+                              active="true"
+                              clickable={false}
+                              iconName={icon}
+                              size="small"
+                              marginRight={12}
+                            />
+                          ))}
                         </HorizontalScroll>
 
                         <Typography
@@ -1006,7 +1052,7 @@ function DashboardPage() {
                           variant="h3"
                           sx={{ fontWeight: 700, fontSize: 18, mt: 2 }}
                         >
-                          Price {" "}
+                          Price{" "}
                           <Typography component="span" fontWeight={400}>
                             (per month)
                           </Typography>

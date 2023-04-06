@@ -42,7 +42,6 @@ function ApartmentMarker(props) {
                   height="200"
                   style={{ border: 0 }}
                   src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.REACT_APP_MAPS_API_KEY}&location=${props.lat},${props.lng}&heading=210&pitch=0`}
-                  allowFullScreen
                 ></iframe>
               </Box>
               <Typography
