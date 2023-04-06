@@ -39,9 +39,8 @@ const auth = (req, res, next) => {
   }
 };
 
-app.get("/", (req, res) => {
-  res.status(201).json({ hello: "HELLO WORLD" });
-});
+// Export the app as a function that Vercel can use
+module.exports = app;
 
 // Export the app as a function that Vercel can use
 module.exports = app;
