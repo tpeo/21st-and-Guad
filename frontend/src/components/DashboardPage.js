@@ -22,6 +22,7 @@ import {
   Modal,
   Paper,
   ListItem,
+  Link,
   Rating,
   TextField,
   InputProps,
@@ -84,7 +85,39 @@ function DashboardPage() {
     setVal(event.target.value);
   };
 
-  //create profile
+  
+  //create apartment
+  async function createApartment() {
+    await fetch(`http://${process.env.REACT_APP_HOSTNAME}/apartments`, {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors", // no-cors, *cors, same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify({
+        groupId: userGroupID,
+        name: formData.name,
+        address: formData.address,
+        phone_number: formData.phone_number,
+        amenities: formData.amenities,
+        distance: formData.distance,
+        price_low: formData.price_low,
+        price_high: formData.price_high,
+        floorplan: formData.floorplan,
+      }),
+    })
+      .then((resp) => resp.json())
+      .then((json) => console.log(json))
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  //update apartment
   async function updateApartment() {
     await fetch(`http://${process.env.REACT_APP_HOSTNAME}/apartments`, {
       method: "PUT", // *GET, POST, PUT, DELETE, etc.
@@ -217,6 +250,7 @@ function DashboardPage() {
     };
     fetchData();
   }, []);
+
 
   //creates the very first group for a user
   const createGroup = async () => {
@@ -369,35 +403,59 @@ function DashboardPage() {
                 </IconButton>
               </Box>
 
-              <Accordion sx={{width: 150, boxShadow: 0, ml: "25%", borderTop: 0}}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-              >
-               
-                
-                <Typography>{userData.name}</Typography>
+              <Accordion disableGutters="true" fullWidth sx={{boxShadow: 0, borderTop: 0, mt: -2, mb: 1,
+                '&:before': {
+                  display: 'none',
+                },
+                content: {
+                  flexGrow: 0
+                },
+                'MuiSvgIcon-root': {
+                  marginRight: 0,
+                  paddingTop: 0
+                }
+              }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography align="center" sx={{fontWeight: 700, fontSize: 19, mb: 0, width:"100%"}} >{userData.name}</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Typography>
-                  Lorem ipsum 
+                      <Typography variant="h3" sx={{fontWeight: 700, fontSize:18, mb: 1, mt: -1}} >
+                          Top Preferences
+                      </Typography>
+
+                      <AmenitiesIcon active="true" iconName={userData.first_preference} size="small" marginRight={12}/>
+                      <AmenitiesIcon active="true" iconName={userData.second_preference} size="small" marginRight={12}/>
+                      <AmenitiesIcon active="true" iconName={userData.third_preference} size="small" marginRight={12}/>
+
+                      <Typography variant="h3" sx={{fontWeight: 700, fontSize:18, mt: 2}} >
+                          Distance
+                      </Typography>
+
+                      <Typography variant="h6" sx={{
+                        fontSize:16, border: 1, fontWeight: 400, borderColor:appTheme.palette.secondary.main, borderRadius: 1, width: 200, paddingLeft: 1, mt: 1, mb: 1
+                        }} >
+                        {userData.distance} miles
+                      </Typography>
+
+                      <Typography variant="h3" sx={{fontWeight: 700, fontSize:18, mt: 2}}>
+                          Max Price
+                      </Typography>
+
+                      <Typography variant="h6" sx={{
+                        fontSize:16, border: 1, fontWeight: 400, borderColor:appTheme.palette.secondary.main, borderRadius: 1, width: 200, paddingLeft: 1, mt: 1, mb: 1
+                        }} >
+                         ${userData.price} per month
+                      </Typography>
                 </Typography>
               </AccordionDetails>
             </Accordion>
-
-
-              {/* <Box component="form" noValidate sx={{ width: 350, my: 2 }}>
-                <FormControl>
-                  <Select
-                    sx={{ ml: 14 }}
-                    //disableunderline
-                    IconComponent={ExpandMoreIcon}
-                    value={val}
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={0}>{userData.name}</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box> */}
+            
+            <Typography align='center' sx={{mb: 2}}>
+              <Link onClick={() => {}} align="center" sx={{color:'#000000', textDecorationColor:'#000000', textUnderlineOffset: 1}}>
+                Leave Hive
+              </Link>
+            </Typography>
 
             </Grid>
 

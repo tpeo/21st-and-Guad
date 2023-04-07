@@ -18,32 +18,45 @@ import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 
 function NavBar() {
     return (
-        
+      <ThemeProvider theme={appTheme}>
           <AppBar elevation={0} position="static">
             <Container maxWidth="xl">
               <Toolbar disableGutters>
-                
-                {/* <HiveIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
                 <img src={process.env.PUBLIC_URL + "/images/logo.png"} alt="Logo" style={{ width: "120px", height: "50px" }}></img>
-                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "right", mr: 5,}}>
+                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "right", mr: 5,  ml: 8, height: 65 }}>
                   
                     <Button component={Link} to="/dashboard"
                       //onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: "white", display: "block" }}
+                      sx={{
+                        mt: 1.5, color: '#000000', display: "block", justifyContent: "left", fontSize: 17, mr: 3, fontWeight: 500,
+                        '&:hover': {
+                            fontWeight: 700
+                        },
+                      }}
                     >
                       Dashboard
                     </Button> 
     
                     <Button component={Link} to="/map"
                       //onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: "white", display: "block" }}
+                      sx={{
+                        mt: 1.5, color: '#000000', display: "block", justifyContent: "left", fontSize: 17, mr: 3, fontWeight: 500,
+                        '&:hover': {
+                            fontWeight: 700
+                        },
+                      }}
                     >
                       Map
                     </Button>
     
                     <Button component={Link} to="/meeting"
                       //onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: "white", display: "block" }}
+                      sx={{
+                        mt: 1.5, color: '#000000', display: "block", justifyContent: "left", fontSize: 17, mr: 3, fontWeight: 500,
+                        '&:hover': {
+                            fontWeight: 700
+                        },
+                      }}
                     >
                       Meetings
                     </Button>
@@ -60,6 +73,8 @@ function NavBar() {
               </Toolbar>
             </Container>
           </AppBar>
+
+        </ThemeProvider>
       );
 }
 

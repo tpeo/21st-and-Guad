@@ -58,10 +58,23 @@ groups.get("/:groupId", async (req, res) => {
     const apartmentsDocs = await apartmentsCollection.get();
     const apartmentsData = apartmentsDocs.docs.map((doc) => doc.data());
 
+    // Get meetings sub-collection data
+    const meetingsCollection = groupRef.collection("meetings");
+    const meetingsDocs = await meetingsCollection.get();
+    const meetingsData = meetingsDocs.docs.map((doc) => {
+      const meetingId = doc.id;
+      const meetingFields = doc.data();
+      return {
+        id: meetingId,
+        ...meetingFields,
+      };
+    });
+
     // returns a JSON with a users array and apartmentData - an array of JSONs
     res.status(200).json({
       users: groupData.users,
       apartmentsData: apartmentsData,
+      meetingsData: meetingsData
     });
   }
 });

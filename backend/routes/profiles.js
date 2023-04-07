@@ -15,6 +15,7 @@ profiles.get("/:userID", async (req, res) => {
     } else {
       const data = doc.data();
       res.status(200).json(data);
+      console.log(data);
     }
   } catch (error) {
     console.error(error);
