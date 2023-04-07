@@ -31,7 +31,9 @@ groups.post("/", async (req, res) => {
     } else {
       throw new Error("User profile not found");
     }
-    console.log("Created a group "+newGroup.id+" with userId of "+body.userId);
+    console.log(
+      "Created a group " + newGroup.id + " with userId of " + body.userId
+    );
     res.status(201).json({ groupId: newGroup.id });
   } catch (error) {
     console.error(error);
@@ -55,6 +57,12 @@ groups.get("/:groupId", async (req, res) => {
 
     // Get apartments sub-collection data
     const apartmentsCollection = groupRef.collection("apartments");
+    const apartmentsData = await apartmentsCollection.get();
+    const formattedApartments = apartmentsData.docs.map((doc) => {
+      const apartment = doc.data();
+      apartment.id = doc.id;
+      return apartment;
+    });
     const apartmentsDocs = await apartmentsCollection.get();
     const apartmentsData = apartmentsDocs.docs.map((doc) => doc.data());
 
@@ -73,6 +81,7 @@ groups.get("/:groupId", async (req, res) => {
     // returns a JSON with a users array and apartmentData - an array of JSONs
     res.status(200).json({
       users: groupData.users,
+      apartmentsData: formattedApartments,
       apartmentsData: apartmentsData,
       meetingsData: meetingsData
     });
@@ -86,36 +95,43 @@ groups.put("/addUser", async (req, res) => {
   const body = req.body;
 
   try {
-    const groupRef = await groups_db.doc(body.groupId);
-    const groupDoc = await groupRef.get();
-    const users = groupDoc.data().users;
-    // Check if the group exists
-    if (!groupDoc.exists) {
-      res.status(404).send("Group not found");
-    } else {
-      // If user is already in the group, return an error
-      if (users.includes(body.userId)) {
-        return res.status(400).send("User already in group");
-      }
+    const profileRef = profiles_db.doc(body.userId);
+    const profileDoc = await profileRef.get();
 
-      // Add the user to the 'users' array
-      users.push(body.userId);
+    if (profileDoc.exists) {
+      const profileData = profileDoc.data();
 
-      // Update the 'users' array in the group document
-      await groupRef.update({ users });
+      // If the user is not in a group, proceed to add them to the group
+      const groupRef = await groups_db.doc(body.groupId);
+      const groupDoc = await groupRef.get();
+      const users = groupDoc.data().users;
 
-      // Add the new group ID to the user's profile document
-      const profileRef = profiles_db.doc(body.userId);
-      const profileDoc = await profileRef.get();
+      // Check if the group exists
+      if (!groupDoc.exists) {
+        res.status(404).send("Group not found");
+      } else {
+        // If user is already in the group, return an error
+        if (users.includes(body.userId)) {
+          return res.status(400).send("User already in this group");
+        }
+        if (profileData.group.length > 0) {
+          return res.status(400).send("User is already in a group");
+        }
 
-      if (profileDoc.exists) {
-        const profileData = profileDoc.data();
+        // Add the user to the 'users' array
+        users.push(body.userId);
+
+        // Update the 'users' array in the group document
+        await groupRef.update({ users });
+
+        // Add the new group ID to the user's profile document
         const updatedGroups = [...profileData.group, body.groupId];
         await profileRef.update({ group: updatedGroups });
-      } else {
-        throw new Error("User profile not found");
+
+        res.status(200).send("User added to group");
       }
-      res.status(200).send("User added to group");
+    } else {
+      throw new Error("User profile not found");
     }
   } catch (error) {
     console.error(error);

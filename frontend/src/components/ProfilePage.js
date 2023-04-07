@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Select,
   Typography,
@@ -15,20 +15,113 @@ import {
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-
+import AddressSearchBar from "./maps/AddressSearchBar.js";
 import { appTheme } from "./Theme.js";
 import NavBar from "./NavBar.js";
 import AuthContext from "../contexts/AuthContext.js";
+import { getDistance } from "../utils/locations.js";
 
 // react.school/material-ui
 
 function ProfilePage() {
-  const [formData, setFormData] = useState({});
-
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  function handleSubmit(event) {}
+  const [apartmentData, setApartmentData] = useState(
+    JSON.parse(window.localStorage.getItem("apartmentData"))
+  );
+
+  async function updateApartmentData() {
+    const origin = window.localStorage.getItem("address");
+
+    const updatedData = await Promise.all(
+      apartmentData.map(async (apartment) => {
+        const destination = apartment.address;
+        const newDistance = await getDistance(origin, destination);
+        // Update Firebase database with new distance
+        fetch(
+          `http://${
+            process.env.REACT_APP_HOSTNAME
+          }/apartments/${window.localStorage.getItem("groupID")}/${
+            apartment.id
+          }/distance`,
+          {
+            method: "PUT",
+            body: JSON.stringify({ distance: newDistance }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        return {
+          ...apartment,
+          distance: newDistance,
+        };
+      })
+    );
+
+    setApartmentData(updatedData);
+    window.localStorage.setItem("apartmentData", JSON.stringify(updatedData));
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const userID = window.localStorage.getItem("userID"); // replace with the user ID of the current user
+    const url = `http://${process.env.REACT_APP_HOSTNAME}/profiles/${userID}`;
+
+    fetch(url, {
+      method: "PUT",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        window.localStorage.setItem("userData", JSON.stringify(formData));
+        window.localStorage.setItem("address", formData.address);
+        updateApartmentData(); // call the function to update apartmentData
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    name: "",
+    gender: "",
+    first_preference: "",
+    second_preference: "",
+    third_preference: "",
+    address: "",
+    price: 0,
+    distance: 0,
+  });
+  const [address, setAddress] = useState(formData.address);
+  const [addressValid, setAddressValid] = useState(true);
+
+  // Define a useEffect hook to get the location when the component mounts
+  useEffect(() => {
+    const cachedUserData = JSON.parse(window.localStorage.getItem("userData"));
+    if (cachedUserData) {
+      setFormData(cachedUserData);
+      console.log("cachedUserData", cachedUserData);
+      setAddress(cachedUserData.address);
+    }
+  }, []);
+
+  // Handle address change
+  const handleAddressChange = async (newValue) => {
+    await setFormData({
+      ...formData,
+      address: newValue,
+    });
+  };
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -106,7 +199,7 @@ function ProfilePage() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={formData.gender}
+                value={formData?.gender ?? ""}
                 onChange={(e) => {
                   setFormData({
                     ...formData,
@@ -130,7 +223,7 @@ function ProfilePage() {
                 autoFocus
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={formData.first_preference}
+                value={formData?.first_preference ?? ""}
                 onChange={(e) => {
                   setFormData({
                     ...formData,
@@ -153,7 +246,7 @@ function ProfilePage() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={formData.second_preference}
+                value={formData?.second_preference ?? ""}
                 onChange={(e) => {
                   setFormData({
                     ...formData,
@@ -176,7 +269,7 @@ function ProfilePage() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={formData.third_preference}
+                value={formData?.third_preference ?? ""}
                 onChange={(e) => {
                   setFormData({
                     ...formData,
@@ -198,15 +291,10 @@ function ProfilePage() {
               margin="normal"
               required
               fullWidth
-              id="name"
-              name="name"
+              id="address"
+              name="address"
               sx={{ mb: 2.5 }}
               type="number"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
-              }}
               value={formData.price}
               onChange={(e) => {
                 setFormData({
@@ -215,6 +303,38 @@ function ProfilePage() {
                 });
               }}
             />
+
+            <Typography component="h5" sx={{ fontWeight: 600, mt: 2 }}>
+              Most Important Building on Campus to Me:
+            </Typography>
+
+            {/* <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              name="name"
+              sx={{ mb: 2.5 }}
+              value={formData.address}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  address: e.target.value,
+                });
+              }}
+            /> */}
+            <AddressSearchBar
+              formData={formData}
+              setFormData={setFormData}
+              address={{ label: formData.address }}
+              setAddress={setAddress}
+              addressValid={addressValid}
+              setAddressValid={setAddressValid}
+              onAddressChange={handleAddressChange}
+            ></AddressSearchBar>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              Current Address: {formData.address}
+            </Typography>
 
             <Typography component="h5" sx={{ fontWeight: 600 }}>
               Max Distance from Campus
@@ -243,21 +363,23 @@ function ProfilePage() {
             />
 
             <Button
-              //onClick={handleNext}
+              onClick={handleSubmit}
               fullWidth
               variant="contained"
               disableElevation
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, color: "white" }}
             >
               Save Changes
             </Button>
             <Button
-              onClick={() => {auth.logout()
-                navigate("/login")}}
+              onClick={() => {
+                auth.logout();
+                navigate("/login");
+              }}
               fullWidth
               variant="contained"
               disableElevation
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, color: "white" }}
             >
               Logout
             </Button>

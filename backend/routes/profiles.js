@@ -35,6 +35,7 @@ profiles.post("/", async (req, res) => {
       third_preference: body.third_preference,
       price: body.price,
       distance: body.distance,
+      address: body.address,
       group: [],
     });
     res.status(200).json({ message: "OK" });
@@ -43,5 +44,29 @@ profiles.post("/", async (req, res) => {
     res.status(500).json({ message: "Error creating profile." });
   }
 });
+
+profiles.put("/:userID", async (req, res) => {
+  try {
+    const userID = req.params.userID;
+    const body = req.body;
+    const doc = await db.collection("profiles").doc(userID).update({
+      email: body.email,
+      name: body.name,
+      gender: body.gender,
+      first_preference: body.first_preference,
+      second_preference: body.second_preference,
+      third_preference: body.third_preference,
+      price: body.price,
+      distance: body.distance,
+      address: body.address,
+      group: body.group,
+    });
+    res.status(200).json({ message: "OK" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error updating profile." });
+  }
+});
+
 
 module.exports = profiles;
