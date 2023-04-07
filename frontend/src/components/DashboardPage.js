@@ -23,6 +23,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   Zoom,
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
@@ -423,7 +424,7 @@ function DashboardPage() {
   useEffect(() => {
     const origin = window.localStorage.getItem("address");
     const destination = formData.address;
-  
+
     async function fetchDistance() {
       try {
         const result = await getDistance(origin, destination);
@@ -435,7 +436,7 @@ function DashboardPage() {
         console.error(error);
       }
     }
-  
+
     // Only fetch new distance if address has changed
     if (origin && destination && origin !== destination) {
       fetchDistance();
@@ -449,7 +450,6 @@ function DashboardPage() {
         });
       }
     });
-
   }, [formData.address]);
 
   useEffect(() => {
@@ -468,7 +468,49 @@ function DashboardPage() {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, [localData]);
-  
+
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+
+  const handleDelete = () => {
+    setOpenConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    fetch(`http://${process.env.REACT_APP_HOSTNAME}/apartments/`, {
+      method: "DELETE",
+      body: JSON.stringify({
+        groupId: userGroupID,
+        apartmentId: formData.id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        mode: "cors",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          console.error(response.statusText);
+        }
+        // Remove the apartment from localData
+        setLocalData((prevLocalData) => ({
+          ...prevLocalData,
+          apartmentData: prevLocalData.apartmentData.filter(
+            (apartment) => apartment.id !== formData.id
+          ),
+        }));
+        // Close the modal
+        handleClose();
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("Failed to delete apartment document");
+      });
+    setOpenConfirmation(false);
+  };
+
+  const handleCloseConfirmation = () => {
+    setOpenConfirmation(false);
+  };
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -483,7 +525,7 @@ function DashboardPage() {
             spacing={0}
             direction="column"
             alignItems="center"
-            style={{ minHeight: "137vh", mb: 20 }}
+            style={{ minHeight: "140vh", mb: 20 }}
           >
             <Grid
               item
@@ -970,17 +1012,51 @@ function DashboardPage() {
                           <Typography
                             align="center"
                             sx={{
-                              fontWeight: 400,
+                              fontWeight: 500,
                               fontSize: 12,
                               mt: 3,
+                              ml: -1,
                               textDecoration: "underline",
                               textDecorationColor: "black",
+                              cursor: "pointer",
                             }}
+                            onClick={handleDelete}
                           >
                             Delete Housing Card
                           </Typography>
+                          <Dialog
+                            open={openConfirmation}
+                            onClose={handleCloseConfirmation}
+                          >
+                            <DialogTitle>Confirm Deletion</DialogTitle>
+                            <DialogContent>
+                              <Typography>
+                                Are you sure you want to{" "}
+                                <span
+                                  style={{ fontWeight: "bold", color: "red" }}
+                                >
+                                  delete
+                                </span>{" "}
+                                this housing card?
+                              </Typography>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button
+                                color="error"
+                                onClick={handleCloseConfirmation}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                onClick={handleConfirmDelete}
+                                variant="outlined"
+                                color="error"
+                              >
+                                Delete
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
                         </Box>
-                        {/* </form> */}
                       </Modal>
 
                       <CardHeader
@@ -1039,8 +1115,9 @@ function DashboardPage() {
                             fontWeight: 400,
                             borderColor: appTheme.palette.secondary.main,
                             borderRadius: 1,
-                            width: 110,
+                            display: "inline-block",
                             paddingLeft: 1,
+                            paddingRight: 1,
                             mt: 1,
                             mb: 1,
                           }}

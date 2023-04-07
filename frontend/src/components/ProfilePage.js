@@ -12,6 +12,7 @@ import {
   Box,
   Grid,
   InputAdornment,
+  Snackbar,
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +21,7 @@ import { appTheme } from "./Theme.js";
 import NavBar from "./NavBar.js";
 import AuthContext from "../contexts/AuthContext.js";
 import { getDistance } from "../utils/locations.js";
+import MuiAlert from "@mui/material/Alert";
 
 // react.school/material-ui
 
@@ -84,6 +86,7 @@ function ProfilePage() {
         window.localStorage.setItem("userData", JSON.stringify(formData));
         window.localStorage.setItem("address", formData.address);
         updateApartmentData(); // call the function to update apartmentData
+        setOpenSnackbar(true); // show the snackbar message
       })
       .catch((error) => {
         console.error(error);
@@ -123,10 +126,20 @@ function ProfilePage() {
     });
   };
 
+  // snackbar state and handlers
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("Changes saved!");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
   return (
     <ThemeProvider theme={appTheme}>
       <NavBar></NavBar>
-
       <Grid
         container
         spacing={0}
@@ -307,22 +320,6 @@ function ProfilePage() {
             <Typography component="h5" sx={{ fontWeight: 600, mt: 2 }}>
               Most Important Building on Campus to Me:
             </Typography>
-
-            {/* <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="name"
-              name="name"
-              sx={{ mb: 2.5 }}
-              value={formData.address}
-              onChange={(e) => {
-                setFormData({
-                  ...formData,
-                  address: e.target.value,
-                });
-              }}
-            /> */}
             <AddressSearchBar
               formData={formData}
               setFormData={setFormData}
@@ -383,6 +380,19 @@ function ProfilePage() {
             >
               Logout
             </Button>
+            <Snackbar
+              open={openSnackbar}
+              autoHideDuration={3000}
+              onClose={handleCloseSnackbar}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+              <MuiAlert
+                onClose={handleCloseSnackbar}
+                severity={snackbarSeverity}
+              >
+                {snackbarMessage}
+              </MuiAlert>
+            </Snackbar>
           </Box>
         </Grid>
       </Grid>
