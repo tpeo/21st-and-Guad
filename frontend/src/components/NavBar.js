@@ -10,74 +10,65 @@ import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 
 function NavBar() {
-  return (
-    <AppBar elevation={0} position="static" sx={{ height: "10vh" }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Link to="/dashboard">
-            <img
-              src={process.env.PUBLIC_URL + "/images/logo.png"}
-              alt="Logo"
-              style={{ width: "120px", height: "50px" }}
-            />
-          </Link>
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              justifyContent: "right",
-              mr: 5,
-            }}
-          >
-            <Button
-              component={Link}
-              to="/dashboard"
-              sx={{
-                my: 2,
-                color: "white",
-                display: "block",
-                textAlign: "center",
-              }}
-            >
-              Dashboard
-            </Button>
+    return (
+      <ThemeProvider theme={appTheme}>
+          <AppBar elevation={0} position="static">
+            <Container maxWidth="xl">
+              <Toolbar disableGutters>
+                <img src={process.env.PUBLIC_URL + "/images/logo.png"} alt="Logo" style={{ width: "120px", height: "50px" }}></img>
+                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "right", mr: 5,  ml: 8, height: 65 }}>
+                  
+                    <Button component={Link} to="/dashboard"
+                      //onClick={handleCloseNavMenu}
+                      sx={{
+                        mt: 1.5, color: '#000000', display: "block", justifyContent: "left", fontSize: 17, mr: 3, fontWeight: 500,
+                        '&:hover': {
+                            fontWeight: 700
+                        },
+                      }}
+                    >
+                      Dashboard
+                    </Button> 
+    
+                    <Button component={Link} to="/map"
+                      //onClick={handleCloseNavMenu}
+                      sx={{
+                        mt: 1.5, color: '#000000', display: "block", justifyContent: "left", fontSize: 17, mr: 3, fontWeight: 500,
+                        '&:hover': {
+                            fontWeight: 700
+                        },
+                      }}
+                    >
+                      Map
+                    </Button>
+    
+                    <Button component={Link} to="/meeting"
+                      //onClick={handleCloseNavMenu}
+                      sx={{
+                        mt: 1.5, color: '#000000', display: "block", justifyContent: "left", fontSize: 17, mr: 3, fontWeight: 500,
+                        '&:hover': {
+                            fontWeight: 700
+                        },
+                      }}
+                    >
+                      Meetings
+                    </Button>
+              
+                </Box>
+    
+                <Tooltip title="User Profile">
+                  {/* <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}> */}
+                  <IconButton component={Link} to="/profile" sx={{ p: 0 }}>
+                    <Avatar />
+                  </IconButton>
+                </Tooltip>
+    
+              </Toolbar>
+            </Container>
+          </AppBar>
 
-            <Button
-              component={Link}
-              to="/map"
-              sx={{
-                my: 2,
-                color: "white",
-                display: "block",
-                textAlign: "center",
-              }}
-            >
-              Map
-            </Button>
-
-            <Button
-              component={Link}
-              to="/meeting"
-              sx={{
-                my: 2,
-                color: "white",
-                display: "block",
-                textAlign: "center",
-              }}
-            >
-              Meetings
-            </Button>
-          </Box>
-
-          <Tooltip title="User Profile">
-            <IconButton component={Link} to="/profile" sx={{ p: 0, marginLeft: 1, mt: -1 }}>
-              <Avatar />
-            </IconButton>
-          </Tooltip>
-        </Toolbar>
-      </Container>
-    </AppBar>
-  );
+        </ThemeProvider>
+      );
 }
 
 export default NavBar;

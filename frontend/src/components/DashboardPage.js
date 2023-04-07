@@ -17,6 +17,9 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   Modal,
+  Paper,
+  ListItem,
+  Link,
   Rating,
   TextField,
   InputAdornment,
@@ -290,6 +293,7 @@ function DashboardPage() {
     fetchData();
   }, []);
 
+
   //creates the very first group for a user
   const createGroup = async () => {
     let userID = window.localStorage.getItem("userID");
@@ -559,16 +563,60 @@ function DashboardPage() {
                 </IconButton>
               </Box>
 
-              <Accordion
-                sx={{ width: 150, boxShadow: 0, ml: "25%", borderTop: 0 }}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>{userData.name}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography>Lorem ipsum</Typography>
-                </AccordionDetails>
-              </Accordion>
+              <Accordion disableGutters="true" fullWidth sx={{boxShadow: 0, borderTop: 0, mt: -2, mb: 1,
+                '&:before': {
+                  display: 'none',
+                },
+                content: {
+                  flexGrow: 0
+                },
+                'MuiSvgIcon-root': {
+                  marginRight: 0,
+                  paddingTop: 0
+                }
+              }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography align="center" sx={{fontWeight: 700, fontSize: 19, mb: 0, width:"100%"}} >{userData.name}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>
+                      <Typography variant="h3" sx={{fontWeight: 700, fontSize:18, mb: 1, mt: -1}} >
+                          Top Preferences
+                      </Typography>
+
+                      <AmenitiesIcon active="true" iconName={userData.first_preference} size="small" marginRight={12}/>
+                      <AmenitiesIcon active="true" iconName={userData.second_preference} size="small" marginRight={12}/>
+                      <AmenitiesIcon active="true" iconName={userData.third_preference} size="small" marginRight={12}/>
+
+                      <Typography variant="h3" sx={{fontWeight: 700, fontSize:18, mt: 2}} >
+                          Distance
+                      </Typography>
+
+                      <Typography variant="h6" sx={{
+                        fontSize:16, border: 1, fontWeight: 400, borderColor:appTheme.palette.secondary.main, borderRadius: 1, width: 200, paddingLeft: 1, mt: 1, mb: 1
+                        }} >
+                        {userData.distance} miles
+                      </Typography>
+
+                      <Typography variant="h3" sx={{fontWeight: 700, fontSize:18, mt: 2}}>
+                          Max Price
+                      </Typography>
+
+                      <Typography variant="h6" sx={{
+                        fontSize:16, border: 1, fontWeight: 400, borderColor:appTheme.palette.secondary.main, borderRadius: 1, width: 200, paddingLeft: 1, mt: 1, mb: 1
+                        }} >
+                         ${userData.price} per month
+                      </Typography>
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+            
+            <Typography align='center' sx={{mb: 2}}>
+              <Link onClick={() => {}} align="center" sx={{color:'#000000', textDecorationColor:'#000000', textUnderlineOffset: 1}}>
+                Leave Hive
+              </Link>
+            </Typography>
+
             </Grid>
 
             <Grid
