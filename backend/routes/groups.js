@@ -57,14 +57,14 @@ groups.get("/:groupId", async (req, res) => {
 
     // Get apartments sub-collection data
     const apartmentsCollection = groupRef.collection("apartments");
-    const apartmentsData = await apartmentsCollection.get();
+    let apartmentsData = await apartmentsCollection.get();
     const formattedApartments = apartmentsData.docs.map((doc) => {
       const apartment = doc.data();
       apartment.id = doc.id;
       return apartment;
     });
     const apartmentsDocs = await apartmentsCollection.get();
-    const apartmentsData = apartmentsDocs.docs.map((doc) => doc.data());
+    apartmentsData = apartmentsDocs.docs.map((doc) => doc.data());
 
     // Get meetings sub-collection data
     const meetingsCollection = groupRef.collection("meetings");
