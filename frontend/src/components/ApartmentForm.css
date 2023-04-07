@@ -54,16 +54,16 @@
   }
   
   .star:hover {
-    color: orange;
+    /* color: orange; */
   }
   
   .selected {
-    color: orange;
+    /* color: orange; */
   }
   
   button {
     padding: 0.5rem 1rem;
-    background-color: orange;
+    /* background-color: orange; */
     color: white;
     border-radius: 5px;
     border: none;
@@ -72,9 +72,9 @@
     margin-top: 1rem;
   }
   
-  button:hover {
+  /* button:hover {
     background-color: darkorange;
-  }
+  } */
 
   .submitBar {
     display: flex;
