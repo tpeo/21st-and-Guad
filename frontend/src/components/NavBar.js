@@ -8,6 +8,8 @@ import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import { appTheme } from "./Theme.js";
 
 function NavBar() {
     return (
