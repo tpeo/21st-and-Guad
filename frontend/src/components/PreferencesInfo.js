@@ -26,6 +26,7 @@ function PreferencesInfo({ formData, setFormData }) {
           alignItems: "center",
           fontSize: appTheme.typography.h1.fontSize,
           mb: 2,
+          mt: "60vh",
         }}
       >
         Let us know your top preferences
@@ -52,6 +53,8 @@ function PreferencesInfo({ formData, setFormData }) {
           <MenuItem value={"Distance"}>Distance</MenuItem>
           <MenuItem value={"Cost"}>Cost</MenuItem>
           <MenuItem value={"Windows"}>Windows</MenuItem>
+          <MenuItem value={"Peaceful"}>Peaceful</MenuItem>
+          <MenuItem value={"Gym"}>Gym</MenuItem>
         </Select>
       </FormControl>
 
@@ -75,6 +78,8 @@ function PreferencesInfo({ formData, setFormData }) {
           <MenuItem value={"Distance"}>Distance</MenuItem>
           <MenuItem value={"Cost"}>Cost</MenuItem>
           <MenuItem value={"Windows"}>Windows</MenuItem>
+          <MenuItem value={"Peaceful"}>Peaceful</MenuItem>
+          <MenuItem value={"Gym"}>Gym</MenuItem>
         </Select>
       </FormControl>
 
@@ -98,6 +103,8 @@ function PreferencesInfo({ formData, setFormData }) {
           <MenuItem value={"Distance"}>Distance</MenuItem>
           <MenuItem value={"Cost"}>Cost</MenuItem>
           <MenuItem value={"Windows"}>Windows</MenuItem>
+          <MenuItem value={"Peaceful"}>Peaceful</MenuItem>
+          <MenuItem value={"Gym"}>Gym</MenuItem>
         </Select>
       </FormControl>
 

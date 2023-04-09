@@ -25,7 +25,7 @@ function ApartmentMarker(props) {
           {selectedApartment && selectedApartment.id === props.data.id && (
             <Box
               style={{
-                position: "absolute",
+                position: "fixed",
                 top: "-8rem",
                 left: "2rem",
                 width: "20rem",

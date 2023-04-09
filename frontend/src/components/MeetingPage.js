@@ -511,7 +511,7 @@ function MeetingPage() {
                                 }}
                               />
 
-                              <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                              <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                                 Attending
                               </Typography>
 
@@ -548,39 +548,39 @@ function MeetingPage() {
 
                       <CardHeader
                         title={
-                          <Typography component="h1" sx={{ fontWeight: 700, fontSize: 30 }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: 30 }}>
                             {elem.event}
                           </Typography>
                         }
                       />
 
                       <CardContent sx={{ mt: -2 }}>
-                        <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                           When
                         </Typography>
 
 
-                        <Typography variant="h6" sx={{
+                        <Typography sx={{
                           fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 130, paddingLeft: 1, mt: 1, mb: 2
                         }} >
                           {format(new Date(elem.date), 'MM/dd/yyyy')}
                         </Typography>
 
-                        <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                           Where
                         </Typography>
 
-                        <Typography variant="h6" sx={{
+                        <Typography sx={{
                           fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 260, paddingLeft: 1, mt: 1, mb: 2
                         }} >
                           {elem.location}
                         </Typography>
 
-                        <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                           Attending
                         </Typography>
 
-                        <Typography variant="h6" sx={{
+                        <Typography sx={{
                           fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 260, paddingLeft: 1, mt: 1, mb: 2
                         }} >
                           {elem.attending}
@@ -705,7 +705,7 @@ function MeetingPage() {
                                   }}
                                 />
 
-                                <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                                <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                                   Attending
                                 </Typography>
 
@@ -742,39 +742,39 @@ function MeetingPage() {
 
                         <CardHeader
                           title={
-                            <Typography component="h1" sx={{ fontWeight: 700, fontSize: 30 }}>
+                            <Typography sx={{ fontWeight: 700, fontSize: 30 }}>
                               {elem.event}
                             </Typography>
                           }
                         />
 
                         <CardContent sx={{ mt: -2 }}>
-                          <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                             When
                           </Typography>
 
 
-                          <Typography variant="h6" sx={{
+                          <Typography sx={{
                             fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 130, paddingLeft: 1, mt: 1, mb: 2
                           }} >
                             {format(new Date(elem.date), 'MM/dd/yyyy')}
                           </Typography>
 
-                          <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                             Where
                           </Typography>
 
-                          <Typography variant="h6" sx={{
+                          <Typography sx={{
                             fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 260, paddingLeft: 1, mt: 1, mb: 2
                           }} >
                             {elem.location}
                           </Typography>
 
-                          <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                             Attending
                           </Typography>
 
-                          <Typography variant="h6" sx={{
+                          <Typography sx={{
                             fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 260, paddingLeft: 1, mt: 1, mb: 2
                           }} >
                             {elem.attending}
@@ -902,7 +902,7 @@ function MeetingPage() {
                                   }}
                                 />
 
-                                <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                                <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                                   Attending
                                 </Typography>
 
@@ -939,39 +939,39 @@ function MeetingPage() {
 
                         <CardHeader
                           title={
-                            <Typography component="h1" sx={{ fontWeight: 700, fontSize: 30 }}>
+                            <Typography sx={{ fontWeight: 700, fontSize: 30 }}>
                               {elem.event}
                             </Typography>
                           }
                         />
 
                         <CardContent sx={{ mt: -2 }}>
-                          <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                             When
                           </Typography>
 
 
-                          <Typography variant="h6" sx={{
+                          <Typography  sx={{
                             fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 130, paddingLeft: 1, mt: 1, mb: 2
                           }} >
                             {format(new Date(elem.date), 'MM/dd/yyyy')}
                           </Typography>
 
-                          <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                             Where
                           </Typography>
 
-                          <Typography variant="h6" sx={{
+                          <Typography sx={{
                             fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 260, paddingLeft: 1, mt: 1, mb: 2
                           }} >
                             {elem.location}
                           </Typography>
 
-                          <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                          <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                             Attending
                           </Typography>
 
-                          <Typography variant="h6" sx={{
+                          <Typography sx={{
                             fontSize: 16, border: 1, fontWeight: 400, borderColor: appTheme.palette.secondary.main, borderRadius: 1, width: 260, paddingLeft: 1, mt: 1, mb: 2
                           }} >
                             {elem.attending}
@@ -1073,7 +1073,7 @@ function MeetingPage() {
                     }}
                   />
 
-                  <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 18 }}>
+                  <Typography sx={{ fontWeight: 700, fontSize: 18 }}>
                     Attending
                   </Typography>
 

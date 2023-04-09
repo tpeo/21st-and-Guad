@@ -57,14 +57,12 @@ groups.get("/:groupId", async (req, res) => {
 
     // Get apartments sub-collection data
     const apartmentsCollection = groupRef.collection("apartments");
-    let apartmentsData = await apartmentsCollection.get();
-    const formattedApartments = apartmentsData.docs.map((doc) => {
+    const apartmentsDocs = await apartmentsCollection.get();
+    const formattedApartments = apartmentsDocs.docs.map((doc) => {
       const apartment = doc.data();
       apartment.id = doc.id;
       return apartment;
     });
-    const apartmentsDocs = await apartmentsCollection.get();
-    apartmentsData = apartmentsDocs.docs.map((doc) => doc.data());
 
     // Get meetings sub-collection data
     const meetingsCollection = groupRef.collection("meetings");
@@ -82,7 +80,6 @@ groups.get("/:groupId", async (req, res) => {
     res.status(200).json({
       users: groupData.users,
       apartmentsData: formattedApartments,
-      apartmentsData: apartmentsData,
       meetingsData: meetingsData
     });
   }

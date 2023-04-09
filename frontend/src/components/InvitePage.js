@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme } from "./Theme.js";
 import {
@@ -26,7 +26,6 @@ function InvitePage() {
 
   // runs on page load to fetch group data and sender name
   useEffect(() => {
-
     // fetch group data from backend and set state
     const fetchGroupData = async () => {
       try {
@@ -109,18 +108,24 @@ function InvitePage() {
         const error = await response.text();
         if (error === "User already in this group") {
           setSnackbarSeverity("warning");
-          setSnackbarMessage("You are already a member of this group! Redirecting to dashboard...");
+          setSnackbarMessage(
+            "You are already a member of this group! Redirecting to dashboard..."
+          );
           setOpenSnackbar(true);
-        } else  if (error === "User is already in a group") {
+        } else if (error === "User is already in a group") {
           setSnackbarSeverity("error");
-          setSnackbarMessage("You cannnot be in more than one group! Redirecting to dashboard...");
+          setSnackbarMessage(
+            "You cannnot be in more than one group! Redirecting to dashboard..."
+          );
           setOpenSnackbar(true);
         } else {
           throw new Error(error);
         }
       } else {
         setSnackbarSeverity("success");
-        setSnackbarMessage("You have successfully joined the group! Redirecting to dashboard...");
+        setSnackbarMessage(
+          "You have successfully joined the group! Redirecting to dashboard..."
+        );
         setOpenSnackbar(true);
       }
       setTimeout(() => {
@@ -152,7 +157,7 @@ function InvitePage() {
         justifyContent="center"
         bgcolor={appTheme.palette.primary.main}
       >
-        <img
+        <Link to="/"><img
           src={process.env.PUBLIC_URL + "/images/logo.png"}
           alt="Logo"
           style={{
@@ -164,7 +169,8 @@ function InvitePage() {
             margin: "20px",
             zIndex: "1",
           }}
-        ></img>
+        ></img></Link>
+        
         <img
           src={process.env.PUBLIC_URL + "/images/HoneyComb.png"}
           alt="HoneyComb"
@@ -195,8 +201,11 @@ function InvitePage() {
           ) : groupData && senderName ? (
             <>
               <Box mb={4}>
-                {/* Replace this with your group photo icon */}
-                <img src="https://via.placeholder.com/150" alt="Group" />
+                <img
+                  src={process.env.PUBLIC_URL + "/images/HiveIconWhite.png"}
+                  alt="Group"
+                  style={{ width: "90px", height: "80px" }}
+                />
               </Box>
               <Typography
                 fontWeight={600}

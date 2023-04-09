@@ -139,17 +139,16 @@ function RegisterPage() {
         {/* right side */}
         <Grid
           item
-          // xs="auto"
-          // sm="auto"
-          // md={6}
           component={Paper}
           sx={{
             borderRadius: 0,
             flexGrow: 1,
             display: "flex",
             width: "50vw",
+            height: "100vh",
             alignItems: "center",
             justifyContent: "center",
+            overflow: "auto",
           }}
         >
           <Box
@@ -165,7 +164,7 @@ function RegisterPage() {
               component="form"
               noValidate
               onSubmit={handleSubmit}
-              sx={{ width: 350, my: 2 }}
+              sx={{ width: 350, my: 2}}
             >
               {conditionalComponent()}
               {page === 2 && (
