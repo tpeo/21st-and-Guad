@@ -2,42 +2,24 @@ import React, { useState, useEffect } from "react";
 import NavBar from "./NavBar";
 import * as constants from "../utils/constants";
 import PropTypes from 'prop-types';
-import moment from "moment";
 import { format } from 'date-fns'
 
 
 
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Select,
   Typography,
   IconButton,
   Button,
-  MenuItem,
-  FormControl,
-  Avatar,
   Box,
   Grid,
   Card,
   CardHeader,
   CardContent,
-  Slider,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
   Modal,
   Fab,
-  Rating,
   Tab,
   Tabs,
   TextField,
-  makeStyles,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Zoom,
 } from "@mui/material";
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -49,17 +31,13 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 
 import {
   Add as AddIcon,
-  Save,
-  Hive,
-  GroupAdd,
-  MenuIcon,
   ExpandMore as ExpandMoreIcon,
   AccountCircleRounded as AccountCircleRoundedIcon,
 } from "@mui/icons-material";
 
 
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import { appTheme, AmenitiesIcon } from "./Theme.js";
+import { ThemeProvider, styled } from "@mui/material/styles";
+import { appTheme } from "./Theme.js";
 
 
 function TabPanel(props) {
@@ -97,7 +75,6 @@ function a11yProps(index) {
 
 
 function MeetingPage() {
-  const AMENITIES_ARRAY = constants.AMENITIES_ARRAY;
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -115,9 +92,6 @@ function MeetingPage() {
 
   const [localData, setLocalData] = useState({ users: [], meetingData: [] });
   const today = new Date();
-
-  const [meetingDateMatchesToday, setMeetingDateMatchesToday] = useState(false);
-
   const [userGroupID, setUserGroupID] = useState(window.localStorage.getItem("groupID"));
   //RUNS ON FIRST RENDER to get groupID, if it exists
   useEffect(() => {
@@ -165,15 +139,6 @@ function MeetingPage() {
             users: groupData.users,
             meetingData: groupData.meetingsData,
           });
-          console.log("groupData: ", groupData);
-          // console.log("localData: ", localData);
-          // console.log("meetingData: ", localData.meetingData);
-          //console.log("test", new Date(localData.meetingData[0].date))
-          // console.log("today", today)
-          // var compare = today == new Date(localData.meetingData[0].date)
-          // console.log("test", compare)
-          const firstMeetingDate = new Date(localData.meetingData[0].date);
-          setMeetingDateMatchesToday(today.getTime() === firstMeetingDate.getTime());
         }
       } catch (error) {
         console.error("Error fetching data:", error);

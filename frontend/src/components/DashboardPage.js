@@ -17,8 +17,6 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   Modal,
-  Paper,
-  ListItem,
   Link,
   Rating,
   TextField,
@@ -28,10 +26,11 @@ import {
   DialogContent,
   DialogTitle,
   Zoom,
+  Snackbar
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme, AmenitiesIcon } from "./Theme.js";
-import { Save, Hive, ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
+import { Hive, ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import HorizontalScroll from "react-horizontal-scrolling";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Carousel from "react-material-ui-carousel";
@@ -41,6 +40,8 @@ import AddGroupDialog from "./cards/AddGroupDialog.js";
 import NoGroups from "./cards/NoGroups.js";
 import { getDistance } from "../utils/locations.js";
 import AddressSearchBar from "./maps/AddressSearchBar.js";
+import MuiAlert from "@mui/material/Alert";
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   //return <Slide direction="up" ref={ref} {...props} />;
@@ -67,6 +68,8 @@ function DashboardPage() {
     console.log(housingCardData);
     try {
       await createApartment(housingCardData); // wait for createApartment to complete
+      setSnackbarMessage("Housing card created successfully!");
+      setOpenSnackbar(true); // show the snackbar message
     } catch (error) {
       console.log(error);
     }
@@ -182,6 +185,8 @@ function DashboardPage() {
     try {
       await updateApartment(); // wait for updateApartment to complete
       handleClose();
+      setSnackbarMessage("Apartment updated successfully!");
+      setOpenSnackbar(true); // show the snackbar message
     } catch (error) {
       console.log(error);
     }
@@ -507,6 +512,17 @@ function DashboardPage() {
 
   const handleCloseConfirmation = () => {
     setOpenConfirmation(false);
+  };
+
+  // snackbar state and handlers
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("Changes saved!");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   return (
@@ -1051,14 +1067,6 @@ function DashboardPage() {
                             <Typography
                               component="h5"
                               width="500"
-                              sx={{ fontWeight: 700, fontSize: 17, mt: 1 }}
-                            >
-                              Signed
-                            </Typography>
-
-                            <Typography
-                              component="h5"
-                              width="500"
                               sx={{
                                 fontWeight: 700,
                                 fontSize: 17,
@@ -1309,30 +1317,6 @@ function DashboardPage() {
                           variant="h3"
                           sx={{ fontWeight: 700, fontSize: 18 }}
                         >
-                          Square Footage
-                        </Typography>
-
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontSize: 16,
-                            border: 1,
-                            fontWeight: 400,
-                            borderColor: appTheme.palette.secondary.main,
-                            borderRadius: 1,
-                            width: 120,
-                            paddingLeft: 1,
-                            mt: 1,
-                            mb: 1,
-                          }}
-                        >
-                          {elem.square_footage} sq ft
-                        </Typography>
-
-                        <Typography
-                          variant="h3"
-                          sx={{ fontWeight: 700, fontSize: 18 }}
-                        >
                           Security
                         </Typography>
 
@@ -1478,6 +1462,19 @@ function DashboardPage() {
           onClose={() => handleDialogClose("group")}
           TransitionComponent={Transition}
         ></AddGroupDialog>
+        <Snackbar
+              open={openSnackbar}
+              autoHideDuration={3000}
+              onClose={handleCloseSnackbar}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+              <MuiAlert
+                onClose={handleCloseSnackbar}
+                severity={snackbarSeverity}
+              >
+                {snackbarMessage}
+              </MuiAlert>
+            </Snackbar>
       </div>
     </ThemeProvider>
   );
