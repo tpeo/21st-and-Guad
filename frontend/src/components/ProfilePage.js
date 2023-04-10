@@ -223,8 +223,6 @@ function ProfilePage() {
                 <MenuItem value={"Male"}>Male</MenuItem>
                 <MenuItem value={"Female"}>Female</MenuItem>
                 <MenuItem value={"Other"}>Other</MenuItem>
-                <MenuItem value={"Peaceful"}>Peaceful</MenuItem>
-                <MenuItem value={"Gym"}>Gym</MenuItem>
               </Select>
             </FormControl>
 
@@ -299,6 +297,8 @@ function ProfilePage() {
                 <MenuItem value={"Distance"}>Distance</MenuItem>
                 <MenuItem value={"Cost"}>Cost</MenuItem>
                 <MenuItem value={"Windows"}>Windows</MenuItem>
+                <MenuItem value={"Peaceful"}>Peaceful</MenuItem>
+                <MenuItem value={"Gym"}>Gym</MenuItem>
               </Select>
             </FormControl>
 

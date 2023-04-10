@@ -333,6 +333,11 @@ function DashboardPage() {
       const data = await response.json();
       window.localStorage.setItem("groupID", data.groupId);
       setUserGroupID(data.groupId); // update userGroupID state
+      //get user data and parse it
+      const userData = JSON.parse(window.localStorage.getItem("userData"));
+      //add groupID to userData
+      userData.group = [data.groupId];
+      window.localStorage.setItem("userData", JSON.stringify(userData));
     } catch (error) {
       console.error("Error creating group:", error);
     }
