@@ -66,34 +66,34 @@ function LoginPage() {
 
   return (
     <ThemeProvider theme={appTheme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid container component="main" sx={{ height: "100vh", overflow: "hidden" }}>
         <CssBaseline />
 
         {/* left side */}
-        <img
-          src={process.env.PUBLIC_URL + "/images/logoSplash.png"}
-          alt="Logo"
-          style={{
-            top: 0,
-            left: 0,
-            height: "100vh",
-            width: "35vw",
-          }}
-        ></img>
-
+        <Link href="/" variant="body2" underline="none">
+          <img
+            src={process.env.PUBLIC_URL + "/images/logoSplash.png"}
+            alt="Logo"
+            style={{
+              top: 0,
+              left: 0,
+              height: "100vh",
+              width: "35vw",
+            }}
+          ></img>
+        </Link>
         {/* right side */}
         <Grid
           item
-          // xs={12}
-          // sm={6}
-          // md={6}
           component={Paper}
-          sx={{ borderRadius: 0,
+          sx={{
+            borderRadius: 0,
             flexGrow: 1,
             display: "flex",
             width: "50vw",
             alignItems: "center",
-            justifyContent: "center", }}
+            justifyContent: "center",
+          }}
         >
           <Box
             sx={{
@@ -118,26 +118,11 @@ function LoginPage() {
                   flexDirection: "column",
                   alignItems: "center",
                   fontSize: appTheme.typography.h1.fontSize,
+                  mb: 4,
                 }}
               >
                 Login
               </Typography>
-
-              {/* implement this later https://developers.google.com/identity/gsi/web/reference/js-reference */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disableElevation
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  backgroundColor: appTheme.palette.primary.grey2,
-                  color: "#000000",
-                }}
-              >
-                Sign in with Google
-              </Button>
 
               <Typography component="h5" sx={{ fontWeight: 600, mb: -1.5 }}>
                 Email

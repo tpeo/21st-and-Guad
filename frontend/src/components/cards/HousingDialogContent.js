@@ -79,6 +79,7 @@ function HousingDialogContent({ onSubmit, onClose }) {
         square_footage: "",
         notes: "",
       });
+      setAddress("");
       // reset the active state of amenities icons
       setResetAmenities(true);
     }

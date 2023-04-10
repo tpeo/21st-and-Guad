@@ -121,21 +121,22 @@ function RegisterPage() {
 
   return (
     <ThemeProvider theme={appTheme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid container component="main" sx={{ height: "100vh", overflow: "hidden" }}>
         <CssBaseline />
 
         {/* left side */}
-        <img
-          src={process.env.PUBLIC_URL + "/images/logoSplash.png"}
-          alt="Logo"
-          style={{
-            top: 0,
-            left: 0,
-            height: "100vh",
-            width: "35vw",
-          }}
-        ></img>
-
+        <Link href="/" variant="body2" underline="none">
+          <img
+            src={process.env.PUBLIC_URL + "/images/logoSplash.png"}
+            alt="Logo"
+            style={{
+              top: 0,
+              left: 0,
+              height: "100vh",
+              width: "35vw",
+            }}
+          ></img>
+        </Link>
         {/* right side */}
         <Grid
           item
@@ -164,7 +165,7 @@ function RegisterPage() {
               component="form"
               noValidate
               onSubmit={handleSubmit}
-              sx={{ width: 350, my: 2}}
+              sx={{ width: 350, my: 2 }}
             >
               {conditionalComponent()}
               {page === 2 && (

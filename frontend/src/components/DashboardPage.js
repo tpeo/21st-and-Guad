@@ -26,7 +26,7 @@ import {
   DialogContent,
   DialogTitle,
   Zoom,
-  Snackbar
+  Snackbar,
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme, AmenitiesIcon } from "./Theme.js";
@@ -41,7 +41,6 @@ import NoGroups from "./cards/NoGroups.js";
 import { getDistance } from "../utils/locations.js";
 import AddressSearchBar from "./maps/AddressSearchBar.js";
 import MuiAlert from "@mui/material/Alert";
-
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   //return <Slide direction="up" ref={ref} {...props} />;
@@ -186,6 +185,7 @@ function DashboardPage() {
       await updateApartment(); // wait for updateApartment to complete
       handleClose();
       setSnackbarMessage("Apartment updated successfully!");
+      setAddress("");
       setOpenSnackbar(true); // show the snackbar message
     } catch (error) {
       console.log(error);
@@ -284,10 +284,26 @@ function DashboardPage() {
           });
           const groupData = await groupResponse.json();
 
+          //calculate distances
+          // Calculate distances
+          const userAddress = window.localStorage.getItem("address");
+          const apartmentDataWithDistance = await Promise.all(
+            groupData.apartmentsData.map(async (apartment) => {
+              const distance = await getDistance(
+                userAddress,
+                apartment.address
+              );
+              return {
+                ...apartment,
+                distance: distance,
+              };
+            })
+          );
+
           // Store the group data in the local state
           setLocalData({
             users: groupData.users,
-            apartmentData: groupData.apartmentsData,
+            apartmentData: apartmentDataWithDistance,
           });
           console.log("groupData:", groupData);
         }
@@ -1463,18 +1479,15 @@ function DashboardPage() {
           TransitionComponent={Transition}
         ></AddGroupDialog>
         <Snackbar
-              open={openSnackbar}
-              autoHideDuration={3000}
-              onClose={handleCloseSnackbar}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-              <MuiAlert
-                onClose={handleCloseSnackbar}
-                severity={snackbarSeverity}
-              >
-                {snackbarMessage}
-              </MuiAlert>
-            </Snackbar>
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <MuiAlert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
       </div>
     </ThemeProvider>
   );
